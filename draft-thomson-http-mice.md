@@ -22,8 +22,11 @@ author:
 
 normative:
   RFC2119:
+  RFC4648:
+  RFC5226:
   RFC7230:
   RFC7231:
+  RFC7233:
   FIPS180-4:
     title: NIST FIPS 180-4, Secure Hash Standard
     author:
@@ -317,21 +320,21 @@ signature algorithms.
 
 # IANA Considerations
 
-## The "mi" HTTP Content Encoding
+## The "mi-sha256" HTTP Content Encoding
 
-This memo registers the "mi" HTTP content-coding in the HTTP Content Codings
+This memo registers the "mi-sha256" HTTP content-coding in the HTTP Content Codings
 Registry, as detailed in {{encoding}}.
 
-* Name: mi
+* Name: mi-sha256
 * Description: A Merkle Hash Tree based content encoding that provides
-               progressive integrity
+               progressive integrity.
 * Reference: this specification
 
 
 ## MI Header Field {#iana-header}
 
 This memo registers the "MI" HTTP header field in the Permanent Message
-Header Registry, as detailed in {{encryption}}.
+Header Registry, as detailed in {{header}}.
 
 * Field name: MI
 * Protocol: HTTP
@@ -344,7 +347,7 @@ Header Registry, as detailed in {{encryption}}.
 
 This memo establishes a registry for parameters used by the "MI" header field
 under the "Hypertext Transfer Protocol (HTTP) Parameters" grouping.  The
-"Hypertext Transfer Protocol (HTTP) Encryption Parameters" operates under an
+"Hypertext Transfer Protocol (HTTP) MI Parameters" registry operates under an
 "Specification Required" policy [RFC5226].
 
 Entries in this registry are expected to include the following information:
