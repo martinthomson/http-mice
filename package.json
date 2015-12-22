@@ -1,0 +1,20 @@
+{
+  "name": "http_mice",
+  "version": "0.1.0",
+  "description": "Integrity Content-Encoding for HTTP",
+  "homepage": "https://github.com/martinthomson/http-mice",
+  "bugs": "https://github.com/martinthomson/http-mice/issues",
+  "author": {
+    "name" : "Martin Thomson",
+    "email" : "martin.thomson@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martinthomson/http-mice.git"
+  },
+  "license": "MIT",
+  "engines" : { "node" : ">=5.2.0" },
+  "dependencies": {
+    "urlsafe-base64": "~1.0.0"
+  }
+}
