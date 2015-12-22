@@ -64,6 +64,9 @@ informative:
       - ins: F. Braun
       - ins: F. Marier
       - ins: J. Weinberger
+    date: 2015-11-13
+    seriesinfo: W3C CR
+    target: https://w3c.github.io/webappsec-subresource-integrity/
 
 --- abstract
 
