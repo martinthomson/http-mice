@@ -23,6 +23,7 @@ author:
 normative:
   RFC2119:
   RFC7230:
+  RFC7231:
   FIPS180-4:
     title: NIST FIPS 180-4, Secure Hash Standard
     author:
@@ -53,8 +54,6 @@ informative:
   RFC2818:
   RFC5246:
   RFC6962:
-  RFC7230:
-  RFC7231:
   SRI:
     title: "Subresource Integrity"
     author:
@@ -110,7 +109,7 @@ sets (such as in [RFC6962]).  However, in this case, a right-skewed tree is used
 to provide a progressive integrity proof.  This integrity proof is used to
 establish that a given record is part of a message.
 
-The hash function used for "mi-sha256" content encoding is SHA-256 [FIPS180-6].  The
+The hash function used for "mi-sha256" content encoding is SHA-256 [FIPS180-4].  The
 integrity proof for all records other than the last is the hash of the
 concatenation of the record, the integrity proof of all subsequent records, and
 a single octet with a value of 0x1:
