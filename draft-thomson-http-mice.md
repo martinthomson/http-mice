@@ -237,9 +237,9 @@ SHOULD NOT fail unless explicitly configured.
 
 # The MI HTTP Header Field  {#header}
 
-The MI HTTP header field describes the encrypted content encoding(s) that have
-been applied to a payload body, and therefore how those content encoding(s) can
-be removed.
+The MI HTTP header field describes the message integrity content encoding(s)
+that have been applied to a payload body, and therefore how those content
+encoding(s) can be removed.
 
 The MI header field uses the extended ABNF syntax defined in Section 1.2 of
 [RFC7230] and the `parameter` rule from [RFC7231]:
