@@ -536,7 +536,8 @@ Internet-Draft                    MICE                     December 2015
               <http://www.rfc-editor.org/info/rfc6962>.
 
    [SRI]      Akhawe, D., Braun, F., Marier, F., and J. Weinberger,
-              "Subresource Integrity", n.d..
+              "Subresource Integrity", W3C CR , November 2015,
+              <https://w3c.github.io/webappsec-subresource-integrity/>.
 
 Appendix A.  Acknowledgements
 
@@ -552,8 +553,7 @@ Appendix B.  FAQ
        Transferring the proof separately is sometimes necessary.
        Separating the value out allows for that to happen more easily.
 
-   2.  Why do messages have to be processed in reverse to construct
-       them?
+
 
 
 
@@ -561,6 +561,9 @@ Thomson                   Expires June 24, 2016                [Page 10]
 
 Internet-Draft                    MICE                     December 2015
 
+
+   2.  Why do messages have to be processed in reverse to construct
+       them?
 
        The final integrity value, no matter how it is derived, has to
        depend on every bit of the message.  That means that there are
@@ -577,9 +580,6 @@ Author's Address
    Mozilla
 
    Email: martin.thomson@gmail.com
-
-
-
 
 
 
