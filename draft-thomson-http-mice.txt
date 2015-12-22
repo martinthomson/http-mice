@@ -76,13 +76,13 @@ Table of Contents
      6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   8
        6.3.1.  p parameter . . . . . . . . . . . . . . . . . . . . .   8
        6.3.2.  keyid parameter . . . . . . . . . . . . . . . . . . .   8
-       6.3.3.  p256ecdsa parameter . . . . . . . . . . . . . . . . .   9
+       6.3.3.  p256ecdsa parameter . . . . . . . . . . . . . . . . .   8
        6.3.4.  rs parameter  . . . . . . . . . . . . . . . . . . . .   9
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
      7.2.  Informative References  . . . . . . . . . . . . . . . . .  10
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  10
-   Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  11
+   Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  10
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
 
 1.  Introduction
@@ -250,21 +250,19 @@ Internet-Draft                    MICE                     December 2015
 
    2.  For the first record:
 
-       a.  If a signature is known for the integrity proof for the first
-       record and the receiver is configured to validate a signature for
-       this message, then the signature is validated with the output of
-       the hash as the signed message.  If this check passes, then the
-       signature applies to the entire message if subsequent checks
-       succeed.
+       1.  If a signature is known for the integrity proof for the first
+           record and the receiver is configured to validate a signature
+           for this message, then the signature is validated with the
+           output of the hash as the signed message.  If this check
+           passes, then the signature applies to the entire message if
+           subsequent checks succeed.
 
-       b.  If the integrity proof for the first record is known, the
-       integrity check passes if the output of SHA-256 is identical to
-       the known value.
+       2.  If the integrity proof for the first record is known, the
+           integrity check passes if the output of SHA-256 is identical
+           to the known value.
 
-       c.  If an integrity proof for the first record is not available,
-       a receiver treats the message as not having integrity protection.
-       This might involve discarding the message, though this will
-       depend on local configuration.
+       3.  If an integrity proof for the first record is not available,
+           treat the message as not having integrity protection.
 
    3.  For all other records, check if the output of SHA-256 is equal to
        the expected value, then the integrity check passes.  The
@@ -274,6 +272,8 @@ Internet-Draft                    MICE                     December 2015
    exchange treated as an error unless explicitly configured otherwise.
    For clients, treat this as equivalent to a server error; servers
    SHOULD generate a 400 status code.  However, if the integrity proof
+   for the first record is not known, this check SHOULD NOT fail unless
+   explicitly configured.
 
 
 
@@ -281,9 +281,6 @@ Thomson                   Expires June 24, 2016                 [Page 5]
 
 Internet-Draft                    MICE                     December 2015
 
-
-   for the first record is not known, this check SHOULD NOT fail unless
-   explicitly configured.
 
 3.  The MI HTTP Header Field
 
@@ -298,9 +295,9 @@ Internet-Draft                    MICE                     December 2015
      encryption_params = [ parameter *( ";" parameter ) ]
 
    If the payload is encoded more than once (as reflected by having
-   multiple content-codings that message integrity), each application of
-   the content encoding is reflected in the MI header field in the order
-   in which they were applied.
+   multiple content-codings that use the message integrity header
+   field), each application of the content encoding is reflected in the
+   MI header field in the order in which they were applied.
 
    The MI header MAY be omitted if the sender intends for the receiver
    to acquire the integrity proof for the first record by other means.
@@ -329,7 +326,10 @@ Internet-Draft                    MICE                     December 2015
    keyid:  The "keyid" parameter optionally identifies the key that was
       used to generate a signature.
 
-
+   rs:  The "rs" parameter contains a positive decimal integer that
+      describes the record size in octets.  This value MUST be greater
+      than 0.  If the "rs" parameter is absent, the record size defaults
+      to 4096 octets.
 
 
 
@@ -337,11 +337,6 @@ Thomson                   Expires June 24, 2016                 [Page 6]
 
 Internet-Draft                    MICE                     December 2015
 
-
-   rs:  The "rs" parameter contains a positive decimal integer that
-      describes the record size in octets.  This value MUST be greater
-      than 0.  If the "rs" parameter is absent, the record size defaults
-      to 4096 octets.
 
 4.  Examples
 
@@ -386,6 +381,11 @@ Internet-Draft                    MICE                     December 2015
    This memo registers the "MI" HTTP header field in the Permanent
    Message Header Registry, as detailed in Section 3.
 
+   o  Field name: MI
+
+   o  Protocol: HTTP
+
+   o  Status: Standard
 
 
 
@@ -393,12 +393,6 @@ Thomson                   Expires June 24, 2016                 [Page 7]
 
 Internet-Draft                    MICE                     December 2015
 
-
-   o  Field name: MI
-
-   o  Protocol: HTTP
-
-   o  Status: Standard
 
    o  Reference: this specification
 
@@ -441,6 +435,12 @@ Internet-Draft                    MICE                     December 2015
 
    o  Reference: this document
 
+6.3.3.  p256ecdsa parameter
+
+   o  Parameter Name: p256ecdsa
+
+   o  Purpose: An ECDSA signature using P-256 over the integrity proof
+      for the first record.
 
 
 
@@ -449,13 +449,6 @@ Thomson                   Expires June 24, 2016                 [Page 8]
 
 Internet-Draft                    MICE                     December 2015
 
-
-6.3.3.  p256ecdsa parameter
-
-   o  Parameter Name: p256ecdsa
-
-   o  Purpose: An ECDSA signature using P-256 over the integrity proof
-      for the first record.
 
    o  Reference: this document
 
@@ -495,17 +488,6 @@ Internet-Draft                    MICE                     December 2015
               Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
               <http://www.rfc-editor.org/info/rfc4648>.
 
-
-
-
-
-
-
-Thomson                   Expires June 24, 2016                 [Page 9]
-
-Internet-Draft                    MICE                     December 2015
-
-
    [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
               IANA Considerations Section in RFCs", BCP 26, RFC 5226,
               DOI 10.17487/RFC5226, May 2008,
@@ -515,6 +497,14 @@ Internet-Draft                    MICE                     December 2015
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
+
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 9]
+
+Internet-Draft                    MICE                     December 2015
+
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
@@ -553,15 +543,6 @@ Appendix A.  Acknowledgements
    David Benjamin and Erik Nygren both separately suggested that
    something like this might be valuable.
 
-
-
-
-
-Thomson                   Expires June 24, 2016                [Page 10]
-
-Internet-Draft                    MICE                     December 2015
-
-
 Appendix B.  FAQ
 
    1.  Why not include the first proof in the encoding?
@@ -573,6 +554,13 @@ Appendix B.  FAQ
 
    2.  Why do messages have to be processed in reverse to construct
        them?
+
+
+
+Thomson                   Expires June 24, 2016                [Page 10]
+
+Internet-Draft                    MICE                     December 2015
+
 
        The final integrity value, no matter how it is derived, has to
        depend on every bit of the message.  That means that there are
@@ -589,6 +577,18 @@ Author's Address
    Mozilla
 
    Email: martin.thomson@gmail.com
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

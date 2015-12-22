@@ -442,7 +442,7 @@ ol, ul {
 
 <ol>
   <li>Hash the record using SHA-256 with a single octet appended.  All records other than the last have an octet with value 0x1 appended, and the last record (which will be between 1 and &#8220;rs&#8221; octets in length) has an octet with value 0x0 appended.</li>
-  <li>For the first record:  <br/><br/> a. If a signature is known for the integrity proof for the first record and the receiver is configured to validate a signature for this message, then the signature is validated with the output of the hash as the signed message.  If this check passes, then the signature applies to the entire message if subsequent checks succeed.  <br/><br/> b. If the integrity proof for the first record is known, the integrity check passes if the output of SHA-256 is identical to the known value.  <br/><br/> c. If an integrity proof for the first record is not available, a receiver treats the message as not having integrity protection.  This might involve discarding the message, though this will depend on local configuration.</li>
+  <li>For the first record:  <ol><li>If a signature is known for the integrity proof for the first record and the receiver is configured to validate a signature for this message, then the signature is validated with the output of the hash as the signed message.  If this check passes, then the signature applies to the entire message if subsequent checks succeed.</li><li>If the integrity proof for the first record is known, the integrity check passes if the output of SHA-256 is identical to the known value.</li><li>If an integrity proof for the first record is not available, treat the message as not having integrity protection.</li></ol></li>
   <li>For all other records, check if the output of SHA-256 is equal to the expected value, then the integrity check passes.  The expected value is the last 32 octets of the previous record.</li>
 </ol>
 <p id="rfc.section.2.2.p.4">If an integrity check fails, the message SHOULD be discarded and the exchange treated as an error unless explicitly configured otherwise.  For clients, treat this as equivalent to a server error; servers SHOULD generate a 400 status code.  However, if the integrity proof for the first record is not known, this check SHOULD NOT fail unless explicitly configured.</p>
@@ -453,7 +453,7 @@ ol, ul {
   MI = #mi_params
   encryption_params = [ parameter *( ";" parameter ) ]
 </pre>
-<p id="rfc.section.3.p.3">If the payload is encoded more than once (as reflected by having multiple content-codings that message integrity), each application of the content encoding is reflected in the MI header field in the order in which they were applied.</p>
+<p id="rfc.section.3.p.3">If the payload is encoded more than once (as reflected by having multiple content-codings that use the message integrity header field), each application of the content encoding is reflected in the MI header field in the order in which they were applied.</p>
 <p id="rfc.section.3.p.4">The MI header MAY be omitted if the sender intends for the receiver to acquire the integrity proof for the first record by other means.</p>
 <h2 id="rfc.section.3.1"><a href="#rfc.section.3.1">3.1.</a> <a href="#mi-header-field-parameters" id="mi-header-field-parameters">MI Header Field Parameters</a></h2>
 <p id="rfc.section.3.1.p.1">The following parameters are used in determining the content encryption key that is used for encryption:</p>
