@@ -209,18 +209,17 @@ MI header field) plus 32 octets.  For each record:
 
 2. For the first record:
 
-   a. If a signature is known for the integrity proof for the first record and
+   1. If a signature is known for the integrity proof for the first record and
       the receiver is configured to validate a signature for this message, then
       the signature is validated with the output of the hash as the signed
       message.  If this check passes, then the signature applies to the entire
       message if subsequent checks succeed.
 
-   b. If the integrity proof for the first record is known, the integrity check
+   2. If the integrity proof for the first record is known, the integrity check
       passes if the output of SHA-256 is identical to the known value.
 
-   c. If an integrity proof for the first record is not available, a receiver
-      treats the message as not having integrity protection.  This might involve
-      discarding the message, though this will depend on local configuration.
+   3. If an integrity proof for the first record is not available, treat the
+      message as not having integrity protection.
 
 3. For all other records, check if the output of SHA-256 is equal to the
    expected value, then the integrity check passes.  The expected value is the
@@ -248,9 +247,9 @@ The MI header field uses the extended ABNF syntax defined in Section 1.2 of
 ~~~
 
 If the payload is encoded more than once (as reflected by having multiple
-content-codings that message integrity), each application of the content
-encoding is reflected in the MI header field in the order in which they were
-applied.
+content-codings that use the message integrity header field), each application
+of the content encoding is reflected in the MI header field in the order in
+which they were applied.
 
 The MI header MAY be omitted if the sender intends for the receiver to acquire
 the integrity proof for the first record by other means.
