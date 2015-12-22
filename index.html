@@ -451,7 +451,7 @@ li, p {
 </ol>
 <p id="rfc.section.2.2.p.4">If an integrity check fails, the message SHOULD be discarded and the exchange treated as an error unless explicitly configured otherwise.  For clients, treat this as equivalent to a server error; servers SHOULD generate a 400 status code.  However, if the integrity proof for the first record is not known, this check SHOULD NOT fail unless explicitly configured.</p>
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#header" id="header">The MI HTTP Header Field</a></h1>
-<p id="rfc.section.3.p.1">The MI HTTP header field describes the encrypted content encoding(s) that have been applied to a payload body, and therefore how those content encoding(s) can be removed.</p>
+<p id="rfc.section.3.p.1">The MI HTTP header field describes the message integrity content encoding(s) that have been applied to a payload body, and therefore how those content encoding(s) can be removed.</p>
 <p id="rfc.section.3.p.2">The MI header field uses the extended ABNF syntax defined in Section 1.2 of <a href="#RFC7230">[RFC7230]</a> and the <samp>parameter</samp> rule from <a href="#RFC7231">[RFC7231]</a>:</p>
 <pre>
   MI = #mi_params
