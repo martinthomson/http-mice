@@ -1,0 +1,616 @@
+
+
+
+
+Network Working Group                                         M. Thomson
+Internet-Draft                                                   Mozilla
+Intended status: Standards Track                       December 22, 2015
+Expires: June 24, 2016
+
+
+                   Merkle Integrity Content Encoding
+                     draft-thomson-http-mice-latest
+
+Abstract
+
+   This memo introduces a content-coding for HTTP that provides
+   integrity for content that can be evaluated progressively.  This
+   provides additional integrity protection for the body of an HTTP
+   message without losing the ability to process the contents in a
+   stream.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on June 24, 2016.
+
+Copyright Notice
+
+   Copyright (c) 2015 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 1]
+
+Internet-Draft                    MICE                     December 2015
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+   2.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . . . .   3
+     2.1.  Record Splitting and Message Structure  . . . . . . . . .   4
+     2.2.  Validating Integrity Proofs . . . . . . . . . . . . . . .   5
+   3.  The MI HTTP Header Field  . . . . . . . . . . . . . . . . . .   6
+     3.1.  MI Header Field Parameters  . . . . . . . . . . . . . . .   6
+   4.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
+     5.1.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   7
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
+     6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   7
+     6.2.  MI Header Field . . . . . . . . . . . . . . . . . . . . .   7
+     6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   8
+       6.3.1.  p parameter . . . . . . . . . . . . . . . . . . . . .   8
+       6.3.2.  keyid parameter . . . . . . . . . . . . . . . . . . .   8
+       6.3.3.  p256ecdsa parameter . . . . . . . . . . . . . . . . .   9
+       6.3.4.  rs parameter  . . . . . . . . . . . . . . . . . . . .   9
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  10
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  10
+   Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  11
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+
+1.  Introduction
+
+   Integrity protection for HTTP content is often necessary.  HTTPS
+   [RFC2818] is the most common form of integrity protection deployed,
+   but that requires a direct TLS [RFC5246] connection to a host.
+   However, additional integrity protection is often desirable.  This
+   might be for additional protection against failures (e.g., [SRI]) or
+   because content needs to traverse multiple HTTPS-protected exchanges.
+
+   This document describes a "mi-sha256" content-encoding (see
+   Section 2) that embeds a progressive, hash-based integrity check
+   based on Merkle Hash Trees [MERKLE].  This integrity scheme
+   optionally supports including a digital signature over the integrity
+   value.
+
+   The means of conveying the root proof used by this content encoding
+   will depend on the requirements for deployment.  This document
+   defines an MI header field (see Section 3) that can carry an
+   integrity proof or signatures over the proof.
+
+
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 2]
+
+Internet-Draft                    MICE                     December 2015
+
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+2.  The "mi-sha256" HTTP Content Encoding
+
+   A Merkle Hash Tree [MERKLE] is a structured integrity mechanism that
+   collates multiple integrity checks into a tree.  The leaf nodes of
+   the tree contain data (or hashes of data) and non-leaf nodes contain
+   hashes of the nodes below them.
+
+   A balanced Merkle Hash Tree is used to efficiently prove membership
+   in large sets (such as in [RFC6962]).  However, in this case, a
+   right-skewed tree is used to provide a progressive integrity proof.
+   This integrity proof is used to establish that a given record is part
+   of a message.
+
+   The hash function used for "mi-sha256" content encoding is SHA-256
+   [FIPS180-4].  The integrity proof for all records other than the last
+   is the hash of the concatenation of the record, the integrity proof
+   of all subsequent records, and a single octet with a value of 0x1:
+
+      proof(r[i]) = r[i] || proof(r[i+1]) || 0x1
+
+   The integrity proof for the final record is the hash of the record
+   with a single octet with a value 0x0 appended:
+
+      proof(r[last]) = r[last] || 0x0
+
+   Figure 1 shows the structure of the integrity proofs for a message
+   that is split into 4 blocks: A, B, C, D).  As shown, the integrity
+   proof for the entire message (that is, "proof(A)") is derived from
+   the content of the first block (A), plus the value of the proof for
+   the second and subsequent blocks.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 3]
+
+Internet-Draft                    MICE                     December 2015
+
+
+       proof(A)
+         /\
+        /  \
+       /    \
+      A    proof(B)
+            /\
+           /  \
+          /    \
+         B    proof_C
+                /\
+               /  \
+              /    \
+             C    proof_D
+                    |
+                    |
+                    D
+
+           Figure 1: Proof structure for a message with 4 blocks
+
+   The final encoded message is formed from the first record, followed
+   by an arbitrary number of tuples of the integrity proof of the next
+   record and then the record itself.  Thus, in Figure 1, the body is:
+
+      A || proof(B) || B || proof(C) || C || proof(D) || D
+
+2.1.  Record Splitting and Message Structure
+
+   In order to produce the final content encoding the content of the
+   message is split into equal-sized records.  The final record can
+   contain less than the defined record size.
+
+   The default record size for the "mi-sha256" content encoding is 4096
+   octets.  This refers to the length of each data block.  The MI header
+   field MAY contain an "rs" parameter that describes a different record
+   size.
+
+   The final encoded stream comprises of a record ("rs" octets),
+   followed by the proof for the following record (32 octets).  This
+   allows a receiver to validate and act upon each record after
+   receiving the proof that follows it.  The final record is not
+   followed by a proof.
+
+   Note:  This content encoding increases the size of a message by 32
+      octets times the length of the message divided by the record size,
+      rounded up, less one.  That is, 32 * (ceil(length / rs) - 1).
+
+
+
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 4]
+
+Internet-Draft                    MICE                     December 2015
+
+
+   Constructing a message with the "mi-sha256" content encoding requires
+   processing of the records in reverse order, inserting the proof
+   derived from each record before that record.
+
+   This structure permits the use of range requests [RFC7233].  However,
+   to validate a given record, a contiguous sequence of records back to
+   the start of the message is needed.
+
+2.2.  Validating Integrity Proofs
+
+   A receiver of a message with the "mi-sha256" content-encoding applied
+   first attempts to acquire the integrity proof for the first record.
+   If the MI header field is present, a value might be included there.
+
+   Then, the message is read into records of size "rs" (based on the
+   value in the MI header field) plus 32 octets.  For each record:
+
+   1.  Hash the record using SHA-256 with a single octet appended.  All
+       records other than the last have an octet with value 0x1
+       appended, and the last record (which will be between 1 and "rs"
+       octets in length) has an octet with value 0x0 appended.
+
+   2.  For the first record:
+
+       a.  If a signature is known for the integrity proof for the first
+       record and the receiver is configured to validate a signature for
+       this message, then the signature is validated with the output of
+       the hash as the signed message.  If this check passes, then the
+       signature applies to the entire message if subsequent checks
+       succeed.
+
+       b.  If the integrity proof for the first record is known, the
+       integrity check passes if the output of SHA-256 is identical to
+       the known value.
+
+       c.  If an integrity proof for the first record is not available,
+       a receiver treats the message as not having integrity protection.
+       This might involve discarding the message, though this will
+       depend on local configuration.
+
+   3.  For all other records, check if the output of SHA-256 is equal to
+       the expected value, then the integrity check passes.  The
+       expected value is the last 32 octets of the previous record.
+
+   If an integrity check fails, the message SHOULD be discarded and the
+   exchange treated as an error unless explicitly configured otherwise.
+   For clients, treat this as equivalent to a server error; servers
+   SHOULD generate a 400 status code.  However, if the integrity proof
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 5]
+
+Internet-Draft                    MICE                     December 2015
+
+
+   for the first record is not known, this check SHOULD NOT fail unless
+   explicitly configured.
+
+3.  The MI HTTP Header Field
+
+   The MI HTTP header field describes the encrypted content encoding(s)
+   that have been applied to a payload body, and therefore how those
+   content encoding(s) can be removed.
+
+   The MI header field uses the extended ABNF syntax defined in
+   Section 1.2 of [RFC7230] and the "parameter" rule from [RFC7231]:
+
+     MI = #mi_params
+     encryption_params = [ parameter *( ";" parameter ) ]
+
+   If the payload is encoded more than once (as reflected by having
+   multiple content-codings that message integrity), each application of
+   the content encoding is reflected in the MI header field in the order
+   in which they were applied.
+
+   The MI header MAY be omitted if the sender intends for the receiver
+   to acquire the integrity proof for the first record by other means.
+
+3.1.  MI Header Field Parameters
+
+   The following parameters are used in determining the content
+   encryption key that is used for encryption:
+
+   p: The "p" parameter carries an integrity proof for the first record
+      of the message.  This provides integrity for the entire message
+      body.  This value is encoded using base64 with the Base 64
+      Encoding with URL and Filename Safe Alphabet (Section 5 of
+      [RFC4648]) with no padding.
+
+   p256ecdsa:  The "p256ecdsa" parameter carries an ECDSA signature over
+      the integrity proof for the first record of the message using
+      P-256 [FIPS186] encoded as defined in [X9.62].  If present, the
+      "p" parameter MAY be ignored and omitted.  This document doesn't
+      describe how a receiver might determine that a particular key is
+      accepted.  Multiple values of this parameter might be provided.
+      If the "keyid" parameter is used to identify a key for each of
+      these, the first "keyid" parameter to precede the "p256ecdsa"
+      parameter is used.
+
+   keyid:  The "keyid" parameter optionally identifies the key that was
+      used to generate a signature.
+
+
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 6]
+
+Internet-Draft                    MICE                     December 2015
+
+
+   rs:  The "rs" parameter contains a positive decimal integer that
+      describes the record size in octets.  This value MUST be greater
+      than 0.  If the "rs" parameter is absent, the record size defaults
+      to 4096 octets.
+
+4.  Examples
+
+   TODO: write a little bit of code...
+
+5.  Security Considerations
+
+   The integrity of an entire message body depends on the means by which
+   the integrity proof for the first record is protected.  If this value
+   comes from the same place as the message, then this provides only
+   limited protection against transport-level errors (something that TLS
+   provides adequate protection against).
+
+   Separate protection for header fields might be provided by other
+   means if the first record retrieved is the first record in the
+   message, but range requests do not allow for this option.
+
+5.1.  Algorithm Agility
+
+   A new content encoding type is needed in order to define the use of a
+   hash function other than SHA-256.
+
+   A new parameter name for the MI header field is needed to support new
+   digital signature algorithms.
+
+6.  IANA Considerations
+
+6.1.  The "mi-sha256" HTTP Content Encoding
+
+   This memo registers the "mi-sha256" HTTP content-coding in the HTTP
+   Content Codings Registry, as detailed in Section 2.
+
+   o  Name: mi-sha256
+
+   o  Description: A Merkle Hash Tree based content encoding that
+      provides progressive integrity.
+
+   o  Reference: this specification
+
+6.2.  MI Header Field
+
+   This memo registers the "MI" HTTP header field in the Permanent
+   Message Header Registry, as detailed in Section 3.
+
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 7]
+
+Internet-Draft                    MICE                     December 2015
+
+
+   o  Field name: MI
+
+   o  Protocol: HTTP
+
+   o  Status: Standard
+
+   o  Reference: this specification
+
+   o  Notes:
+
+6.3.  The HTTP MI Parameter Registry
+
+   This memo establishes a registry for parameters used by the "MI"
+   header field under the "Hypertext Transfer Protocol (HTTP)
+   Parameters" grouping.  The "Hypertext Transfer Protocol (HTTP) MI
+   Parameters" registry operates under an "Specification Required"
+   policy [RFC5226].
+
+   Entries in this registry are expected to include the following
+   information:
+
+   o  Parameter Name: The name of the parameter.
+
+   o  Purpose: A brief description of the purpose of the parameter.
+
+   o  Reference: A reference to a specification that defines the
+      semantics of the parameter.
+
+   The initial contents of this registry are:
+
+6.3.1.  p parameter
+
+   o  Parameter Name: p
+
+   o  Purpose: The value of the integrity proof for the first record.
+
+   o  Reference: this document
+
+6.3.2.  keyid parameter
+
+   o  Parameter Name: keyid
+
+   o  Purpose: An identifier for the key that is used for signature over
+      the integrity proof for the first record.
+
+   o  Reference: this document
+
+
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 8]
+
+Internet-Draft                    MICE                     December 2015
+
+
+6.3.3.  p256ecdsa parameter
+
+   o  Parameter Name: p256ecdsa
+
+   o  Purpose: An ECDSA signature using P-256 over the integrity proof
+      for the first record.
+
+   o  Reference: this document
+
+6.3.4.  rs parameter
+
+   o  Parameter Name: rs
+
+   o  Purpose: The size of the records used for progressive integrity
+      protection.
+
+   o  Reference: this document
+
+7.  References
+
+7.1.  Normative References
+
+   [FIPS180-4]
+              Department of Commerce, National., "NIST FIPS 180-4,
+              Secure Hash Standard", March 2012,
+              <http://csrc.nist.gov/publications/fips/fips180-4/
+              fips-180-4.pdf>.
+
+   [FIPS186]  National Institute of Standards and Technology (NIST),
+              "Digital Signature Standard (DSS)", NIST PUB 186-4 , July
+              2013.
+
+   [MERKLE]   Merkle, R., "A Digital Signature Based on a Conventional
+              Encryption Function", International Crytology Conference -
+              CRYPTO , 1987.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <http://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
+              Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
+              <http://www.rfc-editor.org/info/rfc4648>.
+
+
+
+
+
+
+
+Thomson                   Expires June 24, 2016                 [Page 9]
+
+Internet-Draft                    MICE                     December 2015
+
+
+   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
+              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
+              DOI 10.17487/RFC5226, May 2008,
+              <http://www.rfc-editor.org/info/rfc5226>.
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              <http://www.rfc-editor.org/info/rfc7230>.
+
+   [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
+              DOI 10.17487/RFC7231, June 2014,
+              <http://www.rfc-editor.org/info/rfc7231>.
+
+   [RFC7233]  Fielding, R., Ed., Lafon, Y., Ed., and J. Reschke, Ed.,
+              "Hypertext Transfer Protocol (HTTP/1.1): Range Requests",
+              RFC 7233, DOI 10.17487/RFC7233, June 2014,
+              <http://www.rfc-editor.org/info/rfc7233>.
+
+   [X9.62]    ANSI, "Public Key Cryptography For The Financial Services
+              Industry: The Elliptic Curve Digital Signature Algorithm
+              (ECDSA)", ANSI X9.62 , 1998.
+
+7.2.  Informative References
+
+   [RFC2818]  Rescorla, E., "HTTP Over TLS", RFC 2818,
+              DOI 10.17487/RFC2818, May 2000,
+              <http://www.rfc-editor.org/info/rfc2818>.
+
+   [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
+              (TLS) Protocol Version 1.2", RFC 5246,
+              DOI 10.17487/RFC5246, August 2008,
+              <http://www.rfc-editor.org/info/rfc5246>.
+
+   [RFC6962]  Laurie, B., Langley, A., and E. Kasper, "Certificate
+              Transparency", RFC 6962, DOI 10.17487/RFC6962, June 2013,
+              <http://www.rfc-editor.org/info/rfc6962>.
+
+   [SRI]      Akhawe, D., Braun, F., Marier, F., and J. Weinberger,
+              "Subresource Integrity", n.d..
+
+Appendix A.  Acknowledgements
+
+   David Benjamin and Erik Nygren both separately suggested that
+   something like this might be valuable.
+
+
+
+
+
+Thomson                   Expires June 24, 2016                [Page 10]
+
+Internet-Draft                    MICE                     December 2015
+
+
+Appendix B.  FAQ
+
+   1.  Why not include the first proof in the encoding?
+
+       The requirements for the integrity proof for the first record
+       require a great deal more flexibility than this allows for.
+       Transferring the proof separately is sometimes necessary.
+       Separating the value out allows for that to happen more easily.
+
+   2.  Why do messages have to be processed in reverse to construct
+       them?
+
+       The final integrity value, no matter how it is derived, has to
+       depend on every bit of the message.  That means that there are
+       three choices: both sender and receiver have to process the whole
+       message, the sender has to work backwards, or the receiver has to
+       work backwards.  The current form is the best option of the
+       three.  The expectation is that this will be useful for content
+       that is generated once and sent multiple times, since the onerous
+       backwards processing requirement can be amortized.
+
+Author's Address
+
+   Martin Thomson
+   Mozilla
+
+   Email: martin.thomson@gmail.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thomson                   Expires June 24, 2016                [Page 11]
