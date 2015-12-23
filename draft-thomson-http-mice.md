@@ -67,6 +67,7 @@ informative:
     date: 2015-11-13
     seriesinfo: W3C CR
     target: https://w3c.github.io/webappsec-subresource-integrity/
+  I-D.ietf-httpbis-encryption-encoding:
 
 --- abstract
 
@@ -146,11 +147,11 @@ message (that is, `proof(A)`) is derived from the content of the first block
          /\
         /  \
        /    \
-      B    proof_C
+      B    proof(C)
              /\
             /  \
            /    \
-          C    proof_D
+          C    proof(D)
                  |
                  |
                  D
@@ -267,16 +268,26 @@ p:
 
 : The "p" parameter carries an integrity proof for the first record of the
   message.  This provides integrity for the entire message body.  This value is
-  encoded using base64 with the Base 64 Encoding with URL and Filename Safe
-  Alphabet (Section 5 of [RFC4648]) with no padding.
+  encoded using Base 64 Encoding with URL and Filename Safe Alphabet (Section 5
+  of [RFC4648]) with no padding.
 
 p256ecdsa:
 
 : The "p256ecdsa" parameter carries an ECDSA signature over the integrity proof
   for the first record of the message using P-256 [FIPS186] encoded as defined
-  in [X9.62].  If present, the "p" parameter MAY be ignored and omitted.  This
-  document doesn't describe how a receiver might determine that a particular key
-  is accepted.
+  in [X9.62] then further encoded using Base 64 Encoding with URL and Filename
+  Safe Alphabet (Section 5 of [RFC4648]) with no padding.  If the receiver is
+  expected to validate this signature, the "p" parameter MAY be ignored and
+  omitted.  Note that this document doesn't describe how a receiver might
+  determine that a particular key is acceptable.
+
+  The input to the signature is the UTF-8 encoded string "MI: p256ecdsa", a
+  single zero-valued octet, and the integrity proof for the first record.  That
+  is:
+
+~~~
+  SignInput = "MI: p256ecdsa" || 0x0 || proof(r[0])
+~~~
 
   Multiple values of this parameter might be provided.  If the "keyid" parameter
   is used to identify a key for each of these, the first "keyid" parameter to
@@ -296,7 +307,59 @@ rs:
 
 # Examples
 
-TODO: write a little bit of code...
+## Simple Example
+
+The following example contains a short message.  This contains just a single
+record, so there are no inline integrity proofs, just a single value in a MI
+header field.
+
+~~~
+HTTP/1.1 200 OK
+MI: p=dcRDgR2GM35DluAV13PzgnG6-pvQwPywfFvAu1UeFrs
+Content-Length: 41
+
+When I grow up, I want to be a watermelon
+~~~
+
+
+## Signature Example
+
+The following example includes a signature over the integrity proof for the
+first record.  The public key for the signer is included in a Crypto-Key header
+field using the uncompressed form [X9.62].  The example shows the value for the
+integrity proof in the MI header field, but this could be omitted if the client
+anticipates that the server will verify the signature.
+
+~~~
+PUT /test HTTP/1.1
+Host: example.com
+Crypto-Key: keyid=x;
+            p256ecdsa=BIy6-8mZ48aKJpB54By_dK0pTv94s86yIVef6JhEC_bS
+                      Q-AnXQMX1oYG9dmCeezgJsmzQo52qJbfJEzIXpZiBSA
+MI: rs=16;
+    p=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4;
+    p256ecdsa=3pXnQrynYwnAW2T86MHel0bd6VgidWdQgb4SPGbxGGo
+              vemyiAdgNx5cKYkNSgz4c3vSGFt6_UoF2GLhWRePJeA
+Content-Length: 105
+
+When I grow up,
+OElbplJlPK-Rv6JNK6p5_515IaoPoZo-2elWL7OQ60A
+I want to be a w
+iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0
+atermelon
+~~~
+
+The example shows the same message as above, but with a smaller record size (16
+octets).  This results in two integrity proofs being included in the
+representation.
+
+Since the inline integrity proofs contain non-printing characters, these are
+shown here using the Base 64 Encoding with URL and Filename Safe Alphabet
+[RFC4648] with new lines between the original text and integrity proofs.  Note
+that there is a single trailing space (0x20) on the first line.
+
+The MI and Crypto-Key header fields are split across several lines to fit
+formatting constraints.
 
 
 # Security Considerations
@@ -310,6 +373,7 @@ against).
 Separate protection for header fields might be provided by other means if the
 first record retrieved is the first record in the message, but range requests do
 not allow for this option.
+
 
 ## Algorithm Agility
 
