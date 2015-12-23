@@ -71,10 +71,11 @@ informative:
 
 --- abstract
 
-This memo introduces a content-coding for HTTP that provides integrity for
-content that can be evaluated progressively.  This provides additional integrity
-protection for the body of an HTTP message without losing the ability to process
-the contents in a stream.
+This memo introduces a content-coding for HTTP that provides progressive
+integrity for message contents.  This integrity protection can be evaluated on a
+partial representation, allowing a recipient to process a message as it is
+delivered while retaining strong integrity protection.  The integrity protection
+can optionally be authenticated with a digital signature.
 
 
 --- middle
@@ -116,8 +117,8 @@ sets (such as in [RFC6962]).  However, in this case, a right-skewed tree is used
 to provide a progressive integrity proof.  This integrity proof is used to
 establish that a given record is part of a message.
 
-The hash function used for "mi-sha256" content encoding is SHA-256 [FIPS180-4].  The
-integrity proof for all records other than the last is the hash of the
+The hash function used for "mi-sha256" content encoding is SHA-256 [FIPS180-4].
+The integrity proof for all records other than the last is the hash of the
 concatenation of the record, the integrity proof of all subsequent records, and
 a single octet with a value of 0x1:
 
@@ -167,7 +168,7 @@ the record itself.  Thus, in {{ex-proofs}}, the body is:
 ~~~
 
 
-## Record Splitting and Message Structure {#records}
+## Content Encoding Structure {#records}
 
 In order to produce the final content encoding the content of the message is
 split into equal-sized records.  The final record can contain less than the
@@ -177,10 +178,10 @@ The default record size for the "mi-sha256" content encoding is 4096 octets.
 This refers to the length of each data block.  The MI header field MAY contain
 an "rs" parameter that describes a different record size.
 
-The final encoded stream comprises of a record ("rs" octets), followed by the
-proof for the following record (32 octets).  This allows a receiver to validate
-and act upon each record after receiving the proof that follows it.  The final
-record is not followed by a proof.
+The final encoded stream comprises of a record ("rs" octets in length), followed
+by the proof for the following record (32 octets).  This allows a receiver to
+validate and act upon each record after receiving the proof that follows it.
+The final record is not followed by a proof.
 
 Note:
 
