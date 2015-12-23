@@ -67,7 +67,7 @@ informative:
     date: 2015-11-13
     seriesinfo: W3C CR
     target: https://w3c.github.io/webappsec-subresource-integrity/
-  I-D.ietf-httpbis-encryption-encoding:
+  I-D.thomson-http-encryption:
 
 --- abstract
 
@@ -248,7 +248,7 @@ The MI header field uses the extended ABNF syntax defined in Section 1.2 of
 
 ~~~
   MI = #mi_params
-  encryption_params = [ parameter *( ";" parameter ) ]
+  mi_params = [ parameter *( ";" parameter ) ]
 ~~~
 
 If the payload is encoded more than once (as reflected by having multiple
@@ -262,8 +262,8 @@ the integrity proof for the first record by other means.
 
 ## MI Header Field Parameters
 
-The following parameters are used in determining the content encryption key that
-is used for encryption:
+The following parameters are used in validating content encoded with the
+"mi-sha256" content encoding:
 
 p:
 
@@ -327,9 +327,10 @@ When I grow up, I want to be a watermelon
 
 The following example includes a signature over the integrity proof for the
 first record.  The public key for the signer is included in a Crypto-Key header
-field using the uncompressed form [X9.62].  The example shows the value for the
-integrity proof in the MI header field, but this could be omitted if the client
-anticipates that the server will verify the signature.
+field [I-D.thomson-http-encryption] using the uncompressed form [X9.62].  The
+example shows the value for the integrity proof in the MI header field, but this
+could be omitted if the client anticipates that the server will verify the
+signature.
 
 ~~~
 PUT /test HTTP/1.1
