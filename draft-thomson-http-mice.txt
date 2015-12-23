@@ -4,8 +4,8 @@
 
 Network Working Group                                         M. Thomson
 Internet-Draft                                                   Mozilla
-Intended status: Standards Track                       December 22, 2015
-Expires: June 24, 2016
+Intended status: Standards Track                       December 23, 2015
+Expires: June 25, 2016
 
 
                    Merkle Integrity Content Encoding
@@ -14,10 +14,11 @@ Expires: June 24, 2016
 Abstract
 
    This memo introduces a content-coding for HTTP that provides
-   integrity for content that can be evaluated progressively.  This
-   provides additional integrity protection for the body of an HTTP
-   message without losing the ability to process the contents in a
-   stream.
+   progressive integrity for message contents.  This integrity
+   protection can be evaluated on a partial representation, allowing a
+   recipient to process a message as it is delivered while retaining
+   strong integrity protection.  The integrity protection can optionally
+   be authenticated with a digital signature.
 
 Status of This Memo
 
@@ -34,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on June 24, 2016.
+   This Internet-Draft will expire on June 25, 2016.
 
 Copyright Notice
 
@@ -48,42 +49,46 @@ Copyright Notice
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
    include Simplified BSD License text as described in Section 4.e of
-   the Trust Legal Provisions and are provided without warranty as
-   described in the Simplified BSD License.
 
 
 
-Thomson                   Expires June 24, 2016                 [Page 1]
+
+Thomson                   Expires June 25, 2016                 [Page 1]
 
 Internet-Draft                    MICE                     December 2015
 
+
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
 
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . . . .   3
-     2.1.  Record Splitting and Message Structure  . . . . . . . . .   4
+     2.1.  Content Encoding Structure  . . . . . . . . . . . . . . .   4
      2.2.  Validating Integrity Proofs . . . . . . . . . . . . . . .   5
    3.  The MI HTTP Header Field  . . . . . . . . . . . . . . . . . .   6
      3.1.  MI Header Field Parameters  . . . . . . . . . . . . . . .   6
    4.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
-   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
-     5.1.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   7
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
-     6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   7
-     6.2.  MI Header Field . . . . . . . . . . . . . . . . . . . . .   7
-     6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   8
-       6.3.1.  p parameter . . . . . . . . . . . . . . . . . . . . .   8
-       6.3.2.  keyid parameter . . . . . . . . . . . . . . . . . . .   8
-       6.3.3.  p256ecdsa parameter . . . . . . . . . . . . . . . . .   8
-       6.3.4.  rs parameter  . . . . . . . . . . . . . . . . . . . .   9
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  10
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  10
-   Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  10
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+     4.1.  Simple Example  . . . . . . . . . . . . . . . . . . . . .   7
+     4.2.  Signature Example . . . . . . . . . . . . . . . . . . . .   7
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
+     5.1.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   8
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
+     6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   8
+     6.2.  MI Header Field . . . . . . . . . . . . . . . . . . . . .   9
+     6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   9
+       6.3.1.  p parameter . . . . . . . . . . . . . . . . . . . . .   9
+       6.3.2.  keyid parameter . . . . . . . . . . . . . . . . . . .   9
+       6.3.3.  p256ecdsa parameter . . . . . . . . . . . . . . . . .  10
+       6.3.4.  rs parameter  . . . . . . . . . . . . . . . . . . . .  10
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  11
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  12
+   Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  12
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  12
 
 1.  Introduction
 
@@ -100,19 +105,19 @@ Table of Contents
    optionally supports including a digital signature over the integrity
    value.
 
+
+
+
+
+Thomson                   Expires June 25, 2016                 [Page 2]
+
+Internet-Draft                    MICE                     December 2015
+
+
    The means of conveying the root proof used by this content encoding
    will depend on the requirements for deployment.  This document
    defines an MI header field (see Section 3) that can carry an
    integrity proof or signatures over the proof.
-
-
-
-
-
-Thomson                   Expires June 24, 2016                 [Page 2]
-
-Internet-Draft                    MICE                     December 2015
-
 
 1.1.  Notational Conventions
 
@@ -160,12 +165,7 @@ Internet-Draft                    MICE                     December 2015
 
 
 
-
-
-
-
-
-Thomson                   Expires June 24, 2016                 [Page 3]
+Thomson                   Expires June 25, 2016                 [Page 3]
 
 Internet-Draft                    MICE                     December 2015
 
@@ -178,11 +178,11 @@ Internet-Draft                    MICE                     December 2015
             /\
            /  \
           /    \
-         B    proof_C
+         B    proof(C)
                 /\
                /  \
               /    \
-             C    proof_D
+             C    proof(D)
                     |
                     |
                     D
@@ -195,7 +195,7 @@ Internet-Draft                    MICE                     December 2015
 
       A || proof(B) || B || proof(C) || C || proof(D) || D
 
-2.1.  Record Splitting and Message Structure
+2.1.  Content Encoding Structure
 
    In order to produce the final content encoding the content of the
    message is split into equal-sized records.  The final record can
@@ -206,9 +206,9 @@ Internet-Draft                    MICE                     December 2015
    field MAY contain an "rs" parameter that describes a different record
    size.
 
-   The final encoded stream comprises of a record ("rs" octets),
-   followed by the proof for the following record (32 octets).  This
-   allows a receiver to validate and act upon each record after
+   The final encoded stream comprises of a record ("rs" octets in
+   length), followed by the proof for the following record (32 octets).
+   This allows a receiver to validate and act upon each record after
    receiving the proof that follows it.  The final record is not
    followed by a proof.
 
@@ -221,7 +221,7 @@ Internet-Draft                    MICE                     December 2015
 
 
 
-Thomson                   Expires June 24, 2016                 [Page 4]
+Thomson                   Expires June 25, 2016                 [Page 4]
 
 Internet-Draft                    MICE                     December 2015
 
@@ -277,7 +277,7 @@ Internet-Draft                    MICE                     December 2015
 
 
 
-Thomson                   Expires June 24, 2016                 [Page 5]
+Thomson                   Expires June 25, 2016                 [Page 5]
 
 Internet-Draft                    MICE                     December 2015
 
@@ -292,7 +292,7 @@ Internet-Draft                    MICE                     December 2015
    Section 1.2 of [RFC7230] and the "parameter" rule from [RFC7231]:
 
      MI = #mi_params
-     encryption_params = [ parameter *( ";" parameter ) ]
+     mi_params = [ parameter *( ";" parameter ) ]
 
    If the payload is encoded more than once (as reflected by having
    multiple content-codings that use the message integrity header
@@ -304,24 +304,39 @@ Internet-Draft                    MICE                     December 2015
 
 3.1.  MI Header Field Parameters
 
-   The following parameters are used in determining the content
-   encryption key that is used for encryption:
+   The following parameters are used in validating content encoded with
+   the "mi-sha256" content encoding:
 
    p: The "p" parameter carries an integrity proof for the first record
       of the message.  This provides integrity for the entire message
-      body.  This value is encoded using base64 with the Base 64
-      Encoding with URL and Filename Safe Alphabet (Section 5 of
-      [RFC4648]) with no padding.
+      body.  This value is encoded using Base 64 Encoding with URL and
+      Filename Safe Alphabet (Section 5 of [RFC4648]) with no padding.
 
    p256ecdsa:  The "p256ecdsa" parameter carries an ECDSA signature over
       the integrity proof for the first record of the message using
-      P-256 [FIPS186] encoded as defined in [X9.62].  If present, the
-      "p" parameter MAY be ignored and omitted.  This document doesn't
-      describe how a receiver might determine that a particular key is
-      accepted.  Multiple values of this parameter might be provided.
-      If the "keyid" parameter is used to identify a key for each of
-      these, the first "keyid" parameter to precede the "p256ecdsa"
-      parameter is used.
+      P-256 [FIPS186] encoded as defined in [X9.62] then further encoded
+      using Base 64 Encoding with URL and Filename Safe Alphabet
+      (Section 5 of [RFC4648]) with no padding.  If the receiver is
+      expected to validate this signature, the "p" parameter MAY be
+      ignored and omitted.  Note that this document doesn't describe how
+      a receiver might determine that a particular key is acceptable.
+      The input to the signature is the UTF-8 encoded string "MI:
+      p256ecdsa", a single zero-valued octet, and the integrity proof
+      for the first record.  That is:
+
+     SignInput = "MI: p256ecdsa" || 0x0 || proof(r[0])
+
+   Multiple values of this parameter might be provided.  If the "keyid"
+   parameter is used to identify a key for each of these, the first
+   "keyid" parameter to precede the "p256ecdsa" parameter is used.
+
+
+
+
+Thomson                   Expires June 25, 2016                 [Page 6]
+
+Internet-Draft                    MICE                     December 2015
+
 
    keyid:  The "keyid" parameter optionally identifies the key that was
       used to generate a signature.
@@ -331,16 +346,66 @@ Internet-Draft                    MICE                     December 2015
       than 0.  If the "rs" parameter is absent, the record size defaults
       to 4096 octets.
 
+4.  Examples
+
+4.1.  Simple Example
+
+   The following example contains a short message.  This contains just a
+   single record, so there are no inline integrity proofs, just a single
+   value in a MI header field.
+
+   HTTP/1.1 200 OK
+   MI: p=dcRDgR2GM35DluAV13PzgnG6-pvQwPywfFvAu1UeFrs
+   Content-Length: 41
+
+   When I grow up, I want to be a watermelon
+
+4.2.  Signature Example
+
+   The following example includes a signature over the integrity proof
+   for the first record.  The public key for the signer is included in a
+   Crypto-Key header field [I-D.thomson-http-encryption] using the
+   uncompressed form [X9.62].  The example shows the value for the
+   integrity proof in the MI header field, but this could be omitted if
+   the client anticipates that the server will verify the signature.
+
+   PUT /test HTTP/1.1
+   Host: example.com
+   Crypto-Key: keyid=x;
+               p256ecdsa=BIy6-8mZ48aKJpB54By_dK0pTv94s86yIVef6JhEC_bS
+                         Q-AnXQMX1oYG9dmCeezgJsmzQo52qJbfJEzIXpZiBSA
+   MI: rs=16;
+       p=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4;
+       p256ecdsa=3pXnQrynYwnAW2T86MHel0bd6VgidWdQgb4SPGbxGGo
+                 vemyiAdgNx5cKYkNSgz4c3vSGFt6_UoF2GLhWRePJeA
+   Content-Length: 105
+
+   When I grow up,
+   OElbplJlPK-Rv6JNK6p5_515IaoPoZo-2elWL7OQ60A
+   I want to be a w
+   iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0
+   atermelon
 
 
-Thomson                   Expires June 24, 2016                 [Page 6]
+
+
+Thomson                   Expires June 25, 2016                 [Page 7]
 
 Internet-Draft                    MICE                     December 2015
 
 
-4.  Examples
+   The example shows the same message as above, but with a smaller
+   record size (16 octets).  This results in two integrity proofs being
+   included in the representation.
 
-   TODO: write a little bit of code...
+   Since the inline integrity proofs contain non-printing characters,
+   these are shown here using the Base 64 Encoding with URL and Filename
+   Safe Alphabet [RFC4648] with new lines between the original text and
+   integrity proofs.  Note that there is a single trailing space (0x20)
+   on the first line.
+
+   The MI and Crypto-Key header fields are split across several lines to
+   fit formatting constraints.
 
 5.  Security Considerations
 
@@ -376,6 +441,15 @@ Internet-Draft                    MICE                     December 2015
 
    o  Reference: this specification
 
+
+
+
+
+Thomson                   Expires June 25, 2016                 [Page 8]
+
+Internet-Draft                    MICE                     December 2015
+
+
 6.2.  MI Header Field
 
    This memo registers the "MI" HTTP header field in the Permanent
@@ -386,13 +460,6 @@ Internet-Draft                    MICE                     December 2015
    o  Protocol: HTTP
 
    o  Status: Standard
-
-
-
-Thomson                   Expires June 24, 2016                 [Page 7]
-
-Internet-Draft                    MICE                     December 2015
-
 
    o  Reference: this specification
 
@@ -430,6 +497,15 @@ Internet-Draft                    MICE                     December 2015
 
    o  Parameter Name: keyid
 
+
+
+
+
+Thomson                   Expires June 25, 2016                 [Page 9]
+
+Internet-Draft                    MICE                     December 2015
+
+
    o  Purpose: An identifier for the key that is used for signature over
       the integrity proof for the first record.
 
@@ -441,14 +517,6 @@ Internet-Draft                    MICE                     December 2015
 
    o  Purpose: An ECDSA signature using P-256 over the integrity proof
       for the first record.
-
-
-
-
-Thomson                   Expires June 24, 2016                 [Page 8]
-
-Internet-Draft                    MICE                     December 2015
-
 
    o  Reference: this document
 
@@ -484,6 +552,16 @@ Internet-Draft                    MICE                     December 2015
               DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
+
+
+
+
+
+Thomson                   Expires June 25, 2016                [Page 10]
+
+Internet-Draft                    MICE                     December 2015
+
+
    [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
               Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
               <http://www.rfc-editor.org/info/rfc4648>.
@@ -497,14 +575,6 @@ Internet-Draft                    MICE                     December 2015
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
-
-
-
-
-Thomson                   Expires June 24, 2016                 [Page 9]
-
-Internet-Draft                    MICE                     December 2015
-
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
@@ -522,6 +592,11 @@ Internet-Draft                    MICE                     December 2015
 
 7.2.  Informative References
 
+   [I-D.thomson-http-encryption]
+              Thomson, M., "Encrypted Content-Encoding for HTTP", draft-
+              thomson-http-encryption-02 (work in progress), October
+              2015.
+
    [RFC2818]  Rescorla, E., "HTTP Over TLS", RFC 2818,
               DOI 10.17487/RFC2818, May 2000,
               <http://www.rfc-editor.org/info/rfc2818>.
@@ -534,6 +609,14 @@ Internet-Draft                    MICE                     December 2015
    [RFC6962]  Laurie, B., Langley, A., and E. Kasper, "Certificate
               Transparency", RFC 6962, DOI 10.17487/RFC6962, June 2013,
               <http://www.rfc-editor.org/info/rfc6962>.
+
+
+
+
+Thomson                   Expires June 25, 2016                [Page 11]
+
+Internet-Draft                    MICE                     December 2015
+
 
    [SRI]      Akhawe, D., Braun, F., Marier, F., and J. Weinberger,
               "Subresource Integrity", W3C CR , November 2015,
@@ -552,15 +635,6 @@ Appendix B.  FAQ
        require a great deal more flexibility than this allows for.
        Transferring the proof separately is sometimes necessary.
        Separating the value out allows for that to happen more easily.
-
-
-
-
-
-Thomson                   Expires June 24, 2016                [Page 10]
-
-Internet-Draft                    MICE                     December 2015
-
 
    2.  Why do messages have to be processed in reverse to construct
        them?
@@ -595,22 +669,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Thomson                   Expires June 24, 2016                [Page 11]
+Thomson                   Expires June 25, 2016                [Page 12]
