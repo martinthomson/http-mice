@@ -279,7 +279,8 @@ li, p {
 <link href="#rfc.section.4.1" rel="Chapter" title="4.1 Simple Example"/>
 <link href="#rfc.section.4.2" rel="Chapter" title="4.2 Signature Example"/>
 <link href="#rfc.section.5" rel="Chapter" title="5 Security Considerations"/>
-<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Algorithm Agility"/>
+<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Message Truncation"/>
+<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Algorithm Agility"/>
 <link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations"/>
 <link href="#rfc.section.6.1" rel="Chapter" title="6.1 The &#x201C;mi-sha256&#x201D; HTTP Content Encoding"/>
 <link href="#rfc.section.6.2" rel="Chapter" title="6.2 MI Header Field"/>
@@ -301,7 +302,7 @@ li, p {
 
   <meta name="dct.creator" content="Thomson, M." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-thomson-http-mice-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2015-12-23" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-1-29" />
   <meta name="dct.abstract" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection.  The integrity protection can optionally be authenticated with a digital signature." />
   <meta name="description" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection.  The integrity protection can optionally be authenticated with a digital signature." />
 
@@ -322,10 +323,10 @@ li, p {
 </tr>
 <tr>
   <td class="left">Intended status: Standards Track</td>
-  <td class="right">December 23, 2015</td>
+  <td class="right">January 29, 2016</td>
 </tr>
 <tr>
-  <td class="left">Expires: June 25, 2016</td>
+  <td class="left">Expires: August 1, 2016</td>
   <td class="right"></td>
 </tr>
 
@@ -346,11 +347,11 @@ li, p {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on June 25, 2016.</p>
+<p>This Internet-Draft will expire on August 1, 2016.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
-<p>Copyright (c) 2015 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>Copyright (c) 2016 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (http://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
 
   
@@ -369,7 +370,8 @@ li, p {
 <ul><li>4.1.   <a href="#rfc.section.4.1">Simple Example</a></li>
 <li>4.2.   <a href="#rfc.section.4.2">Signature Example</a></li>
 </ul><li>5.   <a href="#rfc.section.5">Security Considerations</a></li>
-<ul><li>5.1.   <a href="#rfc.section.5.1">Algorithm Agility</a></li>
+<ul><li>5.1.   <a href="#rfc.section.5.1">Message Truncation</a></li>
+<li>5.2.   <a href="#rfc.section.5.2">Algorithm Agility</a></li>
 </ul><li>6.   <a href="#rfc.section.6">IANA Considerations</a></li>
 <ul><li>6.1.   <a href="#rfc.section.6.1">The &#8220;mi-sha256&#8221; HTTP Content Encoding</a></li>
 <li>6.2.   <a href="#rfc.section.6.2">MI Header Field</a></li>
@@ -431,6 +433,7 @@ li, p {
 <pre>
    A || proof(B) || B || proof(C) || C || proof(D) || D
 </pre>
+<p id="rfc.section.2.p.7">A message that has a content length less than or equal to the content size does not include any inline proofs.  The proof for a message with a single record is simply the hash of the body plus a trailing zero octet.</p>
 <h2 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a> <a href="#records" id="records">Content Encoding Structure</a></h2>
 <p id="rfc.section.2.1.p.1">In order to produce the final content encoding the content of the message is split into equal-sized records.  The final record can contain less than the defined record size.</p>
 <p id="rfc.section.2.1.p.2">The default record size for the &#8220;mi-sha256&#8221; content encoding is 4096 octets.  This refers to the length of each data block.  The MI header field MAY contain an &#8220;rs&#8221; parameter that describes a different record size.</p>
@@ -496,7 +499,7 @@ Content-Length: 41
 When I grow up, I want to be a watermelon
 </pre>
 <h2 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> <a href="#signature-example" id="signature-example">Signature Example</a></h2>
-<p id="rfc.section.4.2.p.1">The following example includes a signature over the integrity proof for the first record.  The public key for the signer is included in a Crypto-Key header field <a href="#I-D.thomson-http-encryption">[I-D.thomson-http-encryption]</a> using the uncompressed form <a href="#X9.62">[X9.62]</a>.  The example shows the value for the integrity proof in the MI header field, but this could be omitted if the client anticipates that the server will verify the signature.</p>
+<p id="rfc.section.4.2.p.1">The following example includes a signature over the integrity proof for the first record.  The public key for the signer is included in a Crypto-Key header field <a href="#I-D.ietf-httpbis-encryption-encoding">[I-D.ietf-httpbis-encryption-encoding]</a> using the uncompressed form <a href="#X9.62">[X9.62]</a>.  The example shows the value for the integrity proof in the MI header field, but this could be omitted if the client anticipates that the server will verify the signature.</p>
 <pre>
 PUT /test HTTP/1.1
 Host: example.com
@@ -521,9 +524,12 @@ atermelon
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
 <p id="rfc.section.5.p.1">The integrity of an entire message body depends on the means by which the integrity proof for the first record is protected.  If this value comes from the same place as the message, then this provides only limited protection against transport-level errors (something that TLS provides adequate protection against).</p>
 <p id="rfc.section.5.p.2">Separate protection for header fields might be provided by other means if the first record retrieved is the first record in the message, but range requests do not allow for this option.</p>
-<h2 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#algorithm-agility" id="algorithm-agility">Algorithm Agility</a></h2>
-<p id="rfc.section.5.1.p.1">A new content encoding type is needed in order to define the use of a hash function other than SHA-256.</p>
-<p id="rfc.section.5.1.p.2">A new parameter name for the MI header field is needed to support new digital signature algorithms.</p>
+<h2 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#message-truncation" id="message-truncation">Message Truncation</a></h2>
+<p id="rfc.section.5.1.p.1">This integrity scheme permits the detection of truncated messages.  However, it enables and even encourages processing of messages prior to receiving an complete message.  Actions taken on a partial message can produce incorrect results.  For example, a message could say &#8220;I need some 2mm copper cable, please send 100mm for evaluation purposes&#8221; then be truncated to &#8220;I need some 2mm copper cable, please send 100m&#8221;.  A network-based attacker might be able to force this sort of truncation by delaying packets that contain the remainder of the message.</p>
+<p id="rfc.section.5.1.p.2">Whether it is safe to act on partial messages will depend on the nature of the message and the processing that is performed.</p>
+<h2 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#algorithm-agility" id="algorithm-agility">Algorithm Agility</a></h2>
+<p id="rfc.section.5.2.p.1">A new content encoding type is needed in order to define the use of a hash function other than SHA-256.</p>
+<p id="rfc.section.5.2.p.2">A new parameter name for the MI header field is needed to support new digital signature algorithms.</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
 <h2 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> <a href="#the-mi-sha256-http-content-encoding" id="the-mi-sha256-http-content-encoding">The &#8220;mi-sha256&#8221; HTTP Content Encoding</a></h2>
 <p id="rfc.section.6.1.p.1">This memo registers the &#8220;mi-sha256&#8221; HTTP content-coding in the HTTP Content Codings Registry, as detailed in <a href="#encoding">Section 2</a>.</p>
@@ -659,9 +665,9 @@ atermelon
   <tbody>
     <tr>
       <td class="reference">
-        <b id="I-D.thomson-http-encryption">[I-D.thomson-http-encryption]</b>
+        <b id="I-D.ietf-httpbis-encryption-encoding">[I-D.ietf-httpbis-encryption-encoding]</b>
       </td>
-      <td class="top"><a>Thomson, M.</a>, "<a href="http://tools.ietf.org/html/draft-thomson-http-encryption-02">Encrypted Content-Encoding for HTTP</a>", Internet-Draft draft-thomson-http-encryption-02, October 2015.</td>
+      <td class="top"><a>Thomson, M.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-httpbis-encryption-encoding-00">Encrypted Content-Encoding for HTTP</a>", Internet-Draft draft-ietf-httpbis-encryption-encoding-00, December 2015.</td>
     </tr>
     <tr>
       <td class="reference">

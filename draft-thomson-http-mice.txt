@@ -4,8 +4,8 @@
 
 Network Working Group                                         M. Thomson
 Internet-Draft                                                   Mozilla
-Intended status: Standards Track                       December 23, 2015
-Expires: June 25, 2016
+Intended status: Standards Track                        January 29, 2016
+Expires: August 1, 2016
 
 
                    Merkle Integrity Content Encoding
@@ -35,11 +35,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on June 25, 2016.
+   This Internet-Draft will expire on August 1, 2016.
 
 Copyright Notice
 
-   Copyright (c) 2015 IETF Trust and the persons identified as the
+   Copyright (c) 2016 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Thomson                   Expires June 25, 2016                 [Page 1]
+Thomson                  Expires August 1, 2016                 [Page 1]
 
-Internet-Draft                    MICE                     December 2015
+Internet-Draft                    MICE                      January 2016
 
 
    the Trust Legal Provisions and are provided without warranty as
@@ -74,21 +74,22 @@ Table of Contents
      4.1.  Simple Example  . . . . . . . . . . . . . . . . . . . . .   7
      4.2.  Signature Example . . . . . . . . . . . . . . . . . . . .   7
    5.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
-     5.1.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   8
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
-     6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   8
+     5.1.  Message Truncation  . . . . . . . . . . . . . . . . . . .   8
+     5.2.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   9
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
+     6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   9
      6.2.  MI Header Field . . . . . . . . . . . . . . . . . . . . .   9
-     6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   9
-       6.3.1.  p parameter . . . . . . . . . . . . . . . . . . . . .   9
-       6.3.2.  keyid parameter . . . . . . . . . . . . . . . . . . .   9
+     6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .  10
+       6.3.1.  p parameter . . . . . . . . . . . . . . . . . . . . .  10
+       6.3.2.  keyid parameter . . . . . . . . . . . . . . . . . . .  10
        6.3.3.  p256ecdsa parameter . . . . . . . . . . . . . . . . .  10
-       6.3.4.  rs parameter  . . . . . . . . . . . . . . . . . . . .  10
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  11
+       6.3.4.  rs parameter  . . . . . . . . . . . . . . . . . . . .  11
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  11
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  12
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  12
    Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  12
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  12
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
@@ -108,10 +109,9 @@ Table of Contents
 
 
 
-
-Thomson                   Expires June 25, 2016                 [Page 2]
+Thomson                  Expires August 1, 2016                 [Page 2]
 
-Internet-Draft                    MICE                     December 2015
+Internet-Draft                    MICE                      January 2016
 
 
    The means of conveying the root proof used by this content encoding
@@ -165,9 +165,9 @@ Internet-Draft                    MICE                     December 2015
 
 
 
-Thomson                   Expires June 25, 2016                 [Page 3]
+Thomson                  Expires August 1, 2016                 [Page 3]
 
-Internet-Draft                    MICE                     December 2015
+Internet-Draft                    MICE                      January 2016
 
 
        proof(A)
@@ -195,6 +195,11 @@ Internet-Draft                    MICE                     December 2015
 
       A || proof(B) || B || proof(C) || C || proof(D) || D
 
+   A message that has a content length less than or equal to the content
+   size does not include any inline proofs.  The proof for a message
+   with a single record is simply the hash of the body plus a trailing
+   zero octet.
+
 2.1.  Content Encoding Structure
 
    In order to produce the final content encoding the content of the
@@ -212,19 +217,18 @@ Internet-Draft                    MICE                     December 2015
    receiving the proof that follows it.  The final record is not
    followed by a proof.
 
+
+
+
+
+Thomson                  Expires August 1, 2016                 [Page 4]
+
+Internet-Draft                    MICE                      January 2016
+
+
    Note:  This content encoding increases the size of a message by 32
       octets times the length of the message divided by the record size,
       rounded up, less one.  That is, 32 * (ceil(length / rs) - 1).
-
-
-
-
-
-
-Thomson                   Expires June 25, 2016                 [Page 4]
-
-Internet-Draft                    MICE                     December 2015
-
 
    Constructing a message with the "mi-sha256" content encoding requires
    processing of the records in reverse order, inserting the proof
@@ -270,17 +274,18 @@ Internet-Draft                    MICE                     December 2015
 
    If an integrity check fails, the message SHOULD be discarded and the
    exchange treated as an error unless explicitly configured otherwise.
+
+
+
+Thomson                  Expires August 1, 2016                 [Page 5]
+
+Internet-Draft                    MICE                      January 2016
+
+
    For clients, treat this as equivalent to a server error; servers
    SHOULD generate a 400 status code.  However, if the integrity proof
    for the first record is not known, this check SHOULD NOT fail unless
    explicitly configured.
-
-
-
-Thomson                   Expires June 25, 2016                 [Page 5]
-
-Internet-Draft                    MICE                     December 2015
-
 
 3.  The MI HTTP Header Field
 
@@ -326,17 +331,16 @@ Internet-Draft                    MICE                     December 2015
 
      SignInput = "MI: p256ecdsa" || 0x0 || proof(r[0])
 
+
+
+Thomson                  Expires August 1, 2016                 [Page 6]
+
+Internet-Draft                    MICE                      January 2016
+
+
    Multiple values of this parameter might be provided.  If the "keyid"
    parameter is used to identify a key for each of these, the first
    "keyid" parameter to precede the "p256ecdsa" parameter is used.
-
-
-
-
-Thomson                   Expires June 25, 2016                 [Page 6]
-
-Internet-Draft                    MICE                     December 2015
-
 
    keyid:  The "keyid" parameter optionally identifies the key that was
       used to generate a signature.
@@ -364,10 +368,31 @@ Internet-Draft                    MICE                     December 2015
 
    The following example includes a signature over the integrity proof
    for the first record.  The public key for the signer is included in a
-   Crypto-Key header field [I-D.thomson-http-encryption] using the
-   uncompressed form [X9.62].  The example shows the value for the
+   Crypto-Key header field [I-D.ietf-httpbis-encryption-encoding] using
+   the uncompressed form [X9.62].  The example shows the value for the
    integrity proof in the MI header field, but this could be omitted if
    the client anticipates that the server will verify the signature.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thomson                  Expires August 1, 2016                 [Page 7]
+
+Internet-Draft                    MICE                      January 2016
+
 
    PUT /test HTTP/1.1
    Host: example.com
@@ -385,14 +410,6 @@ Internet-Draft                    MICE                     December 2015
    I want to be a w
    iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0
    atermelon
-
-
-
-
-Thomson                   Expires June 25, 2016                 [Page 7]
-
-Internet-Draft                    MICE                     December 2015
-
 
    The example shows the same message as above, but with a smaller
    record size (16 octets).  This results in two integrity proofs being
@@ -419,7 +436,30 @@ Internet-Draft                    MICE                     December 2015
    means if the first record retrieved is the first record in the
    message, but range requests do not allow for this option.
 
-5.1.  Algorithm Agility
+5.1.  Message Truncation
+
+   This integrity scheme permits the detection of truncated messages.
+   However, it enables and even encourages processing of messages prior
+   to receiving an complete message.  Actions taken on a partial message
+   can produce incorrect results.  For example, a message could say "I
+
+
+
+Thomson                  Expires August 1, 2016                 [Page 8]
+
+Internet-Draft                    MICE                      January 2016
+
+
+   need some 2mm copper cable, please send 100mm for evaluation
+   purposes" then be truncated to "I need some 2mm copper cable, please
+   send 100m".  A network-based attacker might be able to force this
+   sort of truncation by delaying packets that contain the remainder of
+   the message.
+
+   Whether it is safe to act on partial messages will depend on the
+   nature of the message and the processing that is performed.
+
+5.2.  Algorithm Agility
 
    A new content encoding type is needed in order to define the use of a
    hash function other than SHA-256.
@@ -441,15 +481,6 @@ Internet-Draft                    MICE                     December 2015
 
    o  Reference: this specification
 
-
-
-
-
-Thomson                   Expires June 25, 2016                 [Page 8]
-
-Internet-Draft                    MICE                     December 2015
-
-
 6.2.  MI Header Field
 
    This memo registers the "MI" HTTP header field in the Permanent
@@ -464,6 +495,16 @@ Internet-Draft                    MICE                     December 2015
    o  Reference: this specification
 
    o  Notes:
+
+
+
+
+
+
+Thomson                  Expires August 1, 2016                 [Page 9]
+
+Internet-Draft                    MICE                      January 2016
+
 
 6.3.  The HTTP MI Parameter Registry
 
@@ -497,15 +538,6 @@ Internet-Draft                    MICE                     December 2015
 
    o  Parameter Name: keyid
 
-
-
-
-
-Thomson                   Expires June 25, 2016                 [Page 9]
-
-Internet-Draft                    MICE                     December 2015
-
-
    o  Purpose: An identifier for the key that is used for signature over
       the integrity proof for the first record.
 
@@ -519,6 +551,16 @@ Internet-Draft                    MICE                     December 2015
       for the first record.
 
    o  Reference: this document
+
+
+
+
+
+
+Thomson                  Expires August 1, 2016                [Page 10]
+
+Internet-Draft                    MICE                      January 2016
+
 
 6.3.4.  rs parameter
 
@@ -552,16 +594,6 @@ Internet-Draft                    MICE                     December 2015
               DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
-
-
-
-
-
-Thomson                   Expires June 25, 2016                [Page 10]
-
-Internet-Draft                    MICE                     December 2015
-
-
    [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
               Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
               <http://www.rfc-editor.org/info/rfc4648>.
@@ -575,6 +607,16 @@ Internet-Draft                    MICE                     December 2015
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
+
+
+
+
+
+
+Thomson                  Expires August 1, 2016                [Page 11]
+
+Internet-Draft                    MICE                      January 2016
+
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
@@ -592,10 +634,10 @@ Internet-Draft                    MICE                     December 2015
 
 7.2.  Informative References
 
-   [I-D.thomson-http-encryption]
+   [I-D.ietf-httpbis-encryption-encoding]
               Thomson, M., "Encrypted Content-Encoding for HTTP", draft-
-              thomson-http-encryption-02 (work in progress), October
-              2015.
+              ietf-httpbis-encryption-encoding-00 (work in progress),
+              December 2015.
 
    [RFC2818]  Rescorla, E., "HTTP Over TLS", RFC 2818,
               DOI 10.17487/RFC2818, May 2000,
@@ -610,14 +652,6 @@ Internet-Draft                    MICE                     December 2015
               Transparency", RFC 6962, DOI 10.17487/RFC6962, June 2013,
               <http://www.rfc-editor.org/info/rfc6962>.
 
-
-
-
-Thomson                   Expires June 25, 2016                [Page 11]
-
-Internet-Draft                    MICE                     December 2015
-
-
    [SRI]      Akhawe, D., Braun, F., Marier, F., and J. Weinberger,
               "Subresource Integrity", W3C CR , November 2015,
               <https://w3c.github.io/webappsec-subresource-integrity/>.
@@ -630,6 +664,15 @@ Appendix A.  Acknowledgements
 Appendix B.  FAQ
 
    1.  Why not include the first proof in the encoding?
+
+
+
+
+
+Thomson                  Expires August 1, 2016                [Page 12]
+
+Internet-Draft                    MICE                      January 2016
+
 
        The requirements for the integrity proof for the first record
        require a great deal more flexibility than this allows for.
@@ -669,4 +712,17 @@ Author's Address
 
 
 
-Thomson                   Expires June 25, 2016                [Page 12]
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thomson                  Expires August 1, 2016                [Page 13]
