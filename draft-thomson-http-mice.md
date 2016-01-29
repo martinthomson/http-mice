@@ -67,7 +67,7 @@ informative:
     date: 2015-11-13
     seriesinfo: W3C CR
     target: https://w3c.github.io/webappsec-subresource-integrity/
-  I-D.thomson-http-encryption:
+  I-D.ietf-httpbis-encryption-encoding:
 
 --- abstract
 
@@ -327,10 +327,10 @@ When I grow up, I want to be a watermelon
 
 The following example includes a signature over the integrity proof for the
 first record.  The public key for the signer is included in a Crypto-Key header
-field [I-D.thomson-http-encryption] using the uncompressed form [X9.62].  The
-example shows the value for the integrity proof in the MI header field, but this
-could be omitted if the client anticipates that the server will verify the
-signature.
+field [I-D.ietf-httpbis-encryption-encoding] using the uncompressed form
+[X9.62].  The example shows the value for the integrity proof in the MI header
+field, but this could be omitted if the client anticipates that the server will
+verify the signature.
 
 ~~~
 PUT /test HTTP/1.1
