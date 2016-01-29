@@ -381,6 +381,21 @@ first record retrieved is the first record in the message, but range requests do
 not allow for this option.
 
 
+## Message Truncation
+
+This integrity scheme permits the detection of truncated messages.  However, it
+enables and even encourages processing of messages prior to receiving an
+complete message.  Actions taken on a partial message can produce incorrect
+results.  For example, a message could say "I need some 2mm copper cable, please
+send 100mm for evaluation purposes" then be truncated to "I need some 2mm copper
+cable, please send 100m".  A network-based attacker might be able to force this
+sort of truncation by delaying packets that contain the remainder of the
+message.
+
+Whether it is safe to act on partial messages will depend on the nature of the
+message and the processing that is performed.
+
+
 ## Algorithm Agility
 
 A new content encoding type is needed in order to define the use of a hash
