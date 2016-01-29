@@ -167,6 +167,10 @@ the record itself.  Thus, in {{ex-proofs}}, the body is:
    A || proof(B) || B || proof(C) || C || proof(D) || D
 ~~~
 
+A message that has a content length less than or equal to the content size does
+not include any inline proofs.  The proof for a message with a single record is
+simply the hash of the body plus a trailing zero octet.
+
 
 ## Content Encoding Structure {#records}
 
