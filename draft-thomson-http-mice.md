@@ -22,11 +22,10 @@ author:
 
 normative:
   RFC2119:
-  RFC4648:
   RFC5226:
   RFC7230:
   RFC7231:
-  RFC7233:
+  RFC7515:
   FIPS180-4:
     title: NIST FIPS 180-4, Secure Hash Standard
     author:
@@ -40,23 +39,12 @@ normative:
       - ins: R. Merkle
     date: 1987
     seriesinfo: International Crytology Conference - CRYPTO
-  FIPS186:
-    title: "Digital Signature Standard (DSS)"
-    author:
-      - org: National Institute of Standards and Technology (NIST)
-    date: July 2013
-    seriesinfo: NIST PUB 186-4
-  X9.62:
-     title: "Public Key Cryptography For The Financial Services Industry: The Elliptic Curve Digital Signature Algorithm (ECDSA)"
-     author:
-       - org: ANSI
-     date: 1998
-     seriesinfo: ANSI X9.62
 
 informative:
   RFC2818:
   RFC5246:
   RFC6962:
+  RFC7233:
   SRI:
     title: "Subresource Integrity"
     author:
@@ -67,36 +55,33 @@ informative:
     date: 2015-11-13
     seriesinfo: W3C CR
     target: https://w3c.github.io/webappsec-subresource-integrity/
-  I-D.ietf-httpbis-encryption-encoding:
 
 --- abstract
 
 This memo introduces a content-coding for HTTP that provides progressive
 integrity for message contents.  This integrity protection can be evaluated on a
 partial representation, allowing a recipient to process a message as it is
-delivered while retaining strong integrity protection.  The integrity protection
-can optionally be authenticated with a digital signature.
+delivered while retaining strong integrity protection.
 
 
 --- middle
 
 # Introduction
 
-Integrity protection for HTTP content is often necessary.  HTTPS [RFC2818] is
+Integrity protection for HTTP content is highly valuable.  HTTPS [RFC2818] is
 the most common form of integrity protection deployed, but that requires a
 direct TLS [RFC5246] connection to a host.  However, additional integrity
-protection is often desirable.  This might be for additional protection against
-failures (e.g., [SRI]) or because content needs to traverse multiple
-HTTPS-protected exchanges.
+protection might be desirable for some use cases.  This might be for additional
+protection against failures or attack (see [SRI]) or because content needs to
+remain unmodified throughout multiple HTTPS-protected exchanges.
 
 This document describes a "mi-sha256" content-encoding (see {{encoding}}) that
-embeds a progressive, hash-based integrity check based on Merkle Hash Trees
-[MERKLE].  This integrity scheme optionally supports including a digital
-signature over the integrity value.
+is a progressive, hash-based integrity check based on Merkle Hash Trees
+[MERKLE].
 
-The means of conveying the root proof used by this content encoding will depend
-on the requirements for deployment.  This document defines an MI header field
-(see {{header}}) that can carry an integrity proof or signatures over the proof.
+The means of conveying the root integrity proof used by this content encoding
+will depend on deployment requirements.  This document defines an MI header
+field (see {{header}}) that can carry an integrity proof.
 
 
 ## Notational Conventions
@@ -209,39 +194,39 @@ attempts to acquire the integrity proof for the first record.  If the MI header
 field is present, a value might be included there.
 
 Then, the message is read into records of size "rs" (based on the value in the
-MI header field) plus 32 octets.  For each record:
+MI header field) plus 32 octets.  The last record is between 1 and "rs" octets
+in length, if not then validation fails.  For each record:
 
-1. Hash the record using SHA-256 with a single octet appended.  All records
-   other than the last have an octet with value 0x1 appended, and the last
-   record (which will be between 1 and "rs" octets in length) has an octet with
-   value 0x0 appended.
+1. Hash the record using SHA-256 with a single octet appended:
 
-2. For the first record:
+   a. All records other than the last have an octet with a value of 0x1
+      appended.
 
-   1. If a signature is known for the integrity proof for the first record and
-      the receiver is configured to validate a signature for this message, then
-      the signature is validated with the output of the hash as the signed
-      message.  If this check passes, then the signature applies to the entire
-      message if subsequent checks succeed.
+   b. The last record has an octet with a value of 0x0 appended.
 
-   2. If the integrity proof for the first record is known, the integrity check
-      passes if the output of SHA-256 is identical to the known value.
+2. Compare the hash with the expected value:
 
-   3. If an integrity proof for the first record is not available, treat the
-      message as not having integrity protection.
+   a. For the first record, the expected value might found in the MI header
+      field and is otherwise provided through some external means.
 
-3. For all other records, check if the output of SHA-256 is equal to the
-   expected value, then the integrity check passes.  The expected value is the
-   last 32 octets of the previous record.
+   b. For records after the first, the expected value is the last 32 octets of
+      the previous record.
+
+3. If the hash is different, then this record and all subsequent records do not
+   have integrity protection and this process ends.
+
+4. If a record is valid, up to "rs" octets is passed on for processing.  In
+   other words, the trailing 32 octets is removed from every record other than
+   the last before being used.
 
 If an integrity check fails, the message SHOULD be discarded and the exchange
 treated as an error unless explicitly configured otherwise.  For clients, treat
-this as equivalent to a server error; servers SHOULD generate a 400 status code.
-However, if the integrity proof for the first record is not known, this check
-SHOULD NOT fail unless explicitly configured.
+this as equivalent to a server error; servers SHOULD generate a 400 or other 4xx
+status code.  However, if the integrity proof for the first record is not known,
+this check SHOULD NOT fail unless explicitly configured.
 
 
-# The MI HTTP Header Field  {#header}
+# The MI HTTP Header Field {#header}
 
 The MI HTTP header field describes the message integrity content encoding(s)
 that have been applied to a payload body, and therefore how those content
@@ -273,35 +258,7 @@ p:
 
 : The "p" parameter carries an integrity proof for the first record of the
   message.  This provides integrity for the entire message body.  This value is
-  encoded using Base 64 Encoding with URL and Filename Safe Alphabet (Section 5
-  of [RFC4648]) with no padding.
-
-p256ecdsa:
-
-: The "p256ecdsa" parameter carries an ECDSA signature over the integrity proof
-  for the first record of the message using P-256 [FIPS186] encoded as defined
-  in [X9.62] then further encoded using Base 64 Encoding with URL and Filename
-  Safe Alphabet (Section 5 of [RFC4648]) with no padding.  If the receiver is
-  expected to validate this signature, the "p" parameter MAY be ignored and
-  omitted.  Note that this document doesn't describe how a receiver might
-  determine that a particular key is acceptable.
-
-  The input to the signature is the UTF-8 encoded string "MI: p256ecdsa", a
-  single zero-valued octet, and the integrity proof for the first record.  That
-  is:
-
-~~~
-  SignInput = "MI: p256ecdsa" || 0x0 || proof(r[0])
-~~~
-
-  Multiple values of this parameter might be provided.  If the "keyid" parameter
-  is used to identify a key for each of these, the first "keyid" parameter to
-  precede the "p256ecdsa" parameter is used.
-
-keyid:
-
-: The "keyid" parameter optionally identifies the key that was used to generate
-  a signature.
+  encoded using base64url encoding [RFC7515].
 
 rs:
 
@@ -327,25 +284,16 @@ When I grow up, I want to be a watermelon
 ~~~
 
 
-## Signature Example
+## Example with Multiple Records
 
-The following example includes a signature over the integrity proof for the
-first record.  The public key for the signer is included in a Crypto-Key header
-field [I-D.ietf-httpbis-encryption-encoding] using the uncompressed form
-[X9.62].  The example shows the value for the integrity proof in the MI header
-field, but this could be omitted if the client anticipates that the server will
-verify the signature.
+This example shows the same message as above, but with a smaller record size (16
+octets).  This results in two integrity proofs being included in the
+representation.
 
 ~~~
 PUT /test HTTP/1.1
 Host: example.com
-Crypto-Key: keyid=x;
-            p256ecdsa=BIy6-8mZ48aKJpB54By_dK0pTv94s86yIVef6JhEC_bS
-                      Q-AnXQMX1oYG9dmCeezgJsmzQo52qJbfJEzIXpZiBSA
-MI: rs=16;
-    p=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4;
-    p256ecdsa=3pXnQrynYwnAW2T86MHel0bd6VgidWdQgb4SPGbxGGo
-              vemyiAdgNx5cKYkNSgz4c3vSGFt6_UoF2GLhWRePJeA
+MI: rs=16; p=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4
 Content-Length: 105
 
 When I grow up,
@@ -355,17 +303,10 @@ iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0
 atermelon
 ~~~
 
-The example shows the same message as above, but with a smaller record size (16
-octets).  This results in two integrity proofs being included in the
-representation.
-
 Since the inline integrity proofs contain non-printing characters, these are
-shown here using the Base 64 Encoding with URL and Filename Safe Alphabet
-[RFC4648] with new lines between the original text and integrity proofs.  Note
-that there is a single trailing space (0x20) on the first line.
-
-The MI and Crypto-Key header fields are split across several lines to fit
-formatting constraints.
+shown here using the base64url Encoding [RFC7515] with new lines between the
+original text and integrity proofs.  Note that there is a single trailing space
+(0x20) on the first line.
 
 
 # Security Considerations
@@ -400,9 +341,6 @@ message and the processing that is performed.
 
 A new content encoding type is needed in order to define the use of a hash
 function other than SHA-256.
-
-A new parameter name for the MI header field is needed to support new digital
-signature algorithms.
 
 
 # IANA Considerations
@@ -451,18 +389,6 @@ The initial contents of this registry are:
 * Purpose: The value of the integrity proof for the first record.
 * Reference: this document
 
-### keyid parameter
-
-* Parameter Name: keyid
-* Purpose: An identifier for the key that is used for signature over the integrity proof for the first record.
-* Reference: this document
-
-### p256ecdsa parameter
-
-* Parameter Name: p256ecdsa
-* Purpose: An ECDSA signature using P-256 over the integrity proof for the first record.
-* Reference: this document
-
 ### rs parameter
 
 * Parameter Name: rs
@@ -475,7 +401,7 @@ The initial contents of this registry are:
 # Acknowledgements
 
 David Benjamin and Erik Nygren both separately suggested that something like
-this might be valuable.
+this might be valuable.  Eric Rescorla provided useful feedback.
 
 
 # FAQ
