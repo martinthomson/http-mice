@@ -277,7 +277,7 @@ li, p {
 <link href="#rfc.section.3.1" rel="Chapter" title="3.1 MI Header Field Parameters"/>
 <link href="#rfc.section.4" rel="Chapter" title="4 Examples"/>
 <link href="#rfc.section.4.1" rel="Chapter" title="4.1 Simple Example"/>
-<link href="#rfc.section.4.2" rel="Chapter" title="4.2 Signature Example"/>
+<link href="#rfc.section.4.2" rel="Chapter" title="4.2 Example with Multiple Records"/>
 <link href="#rfc.section.5" rel="Chapter" title="5 Security Considerations"/>
 <link href="#rfc.section.5.1" rel="Chapter" title="5.1 Message Truncation"/>
 <link href="#rfc.section.5.2" rel="Chapter" title="5.2 Algorithm Agility"/>
@@ -286,9 +286,7 @@ li, p {
 <link href="#rfc.section.6.2" rel="Chapter" title="6.2 MI Header Field"/>
 <link href="#rfc.section.6.3" rel="Chapter" title="6.3 The HTTP MI Parameter Registry"/>
 <link href="#rfc.section.6.3.1" rel="Chapter" title="6.3.1 p parameter"/>
-<link href="#rfc.section.6.3.2" rel="Chapter" title="6.3.2 keyid parameter"/>
-<link href="#rfc.section.6.3.3" rel="Chapter" title="6.3.3 p256ecdsa parameter"/>
-<link href="#rfc.section.6.3.4" rel="Chapter" title="6.3.4 rs parameter"/>
+<link href="#rfc.section.6.3.2" rel="Chapter" title="6.3.2 rs parameter"/>
 <link href="#rfc.references" rel="Chapter" title="7 References"/>
 <link href="#rfc.references.1" rel="Chapter" title="7.1 Normative References"/>
 <link href="#rfc.references.2" rel="Chapter" title="7.2 Informative References"/>
@@ -302,9 +300,9 @@ li, p {
 
   <meta name="dct.creator" content="Thomson, M." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-thomson-http-mice-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2016-1-29" />
-  <meta name="dct.abstract" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection.  The integrity protection can optionally be authenticated with a digital signature." />
-  <meta name="description" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection.  The integrity protection can optionally be authenticated with a digital signature." />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-4-29" />
+  <meta name="dct.abstract" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection." />
+  <meta name="description" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection." />
 
 </head>
 
@@ -323,10 +321,10 @@ li, p {
 </tr>
 <tr>
   <td class="left">Intended status: Standards Track</td>
-  <td class="right">January 29, 2016</td>
+  <td class="right">April 29, 2016</td>
 </tr>
 <tr>
-  <td class="left">Expires: August 1, 2016</td>
+  <td class="left">Expires: October 31, 2016</td>
   <td class="right"></td>
 </tr>
 
@@ -340,14 +338,14 @@ li, p {
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
 </h1>
-<p>This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection.  The integrity protection can optionally be authenticated with a digital signature.</p>
+<p>This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection.</p>
 <h1 id="rfc.status">
   <a href="#rfc.status">Status of This Memo</a>
 </h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on August 1, 2016.</p>
+<p>This Internet-Draft will expire on October 31, 2016.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -368,7 +366,7 @@ li, p {
 <ul><li>3.1.   <a href="#rfc.section.3.1">MI Header Field Parameters</a></li>
 </ul><li>4.   <a href="#rfc.section.4">Examples</a></li>
 <ul><li>4.1.   <a href="#rfc.section.4.1">Simple Example</a></li>
-<li>4.2.   <a href="#rfc.section.4.2">Signature Example</a></li>
+<li>4.2.   <a href="#rfc.section.4.2">Example with Multiple Records</a></li>
 </ul><li>5.   <a href="#rfc.section.5">Security Considerations</a></li>
 <ul><li>5.1.   <a href="#rfc.section.5.1">Message Truncation</a></li>
 <li>5.2.   <a href="#rfc.section.5.2">Algorithm Agility</a></li>
@@ -377,9 +375,7 @@ li, p {
 <li>6.2.   <a href="#rfc.section.6.2">MI Header Field</a></li>
 <li>6.3.   <a href="#rfc.section.6.3">The HTTP MI Parameter Registry</a></li>
 <ul><li>6.3.1.   <a href="#rfc.section.6.3.1">p parameter</a></li>
-<li>6.3.2.   <a href="#rfc.section.6.3.2">keyid parameter</a></li>
-<li>6.3.3.   <a href="#rfc.section.6.3.3">p256ecdsa parameter</a></li>
-<li>6.3.4.   <a href="#rfc.section.6.3.4">rs parameter</a></li>
+<li>6.3.2.   <a href="#rfc.section.6.3.2">rs parameter</a></li>
 </ul></ul><li>7.   <a href="#rfc.references">References</a></li>
 <ul><li>7.1.   <a href="#rfc.references.1">Normative References</a></li>
 <li>7.2.   <a href="#rfc.references.2">Informative References</a></li>
@@ -391,9 +387,9 @@ li, p {
   </ul>
 
   <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
-<p id="rfc.section.1.p.1">Integrity protection for HTTP content is often necessary.  HTTPS <a href="#RFC2818">[RFC2818]</a> is the most common form of integrity protection deployed, but that requires a direct TLS <a href="#RFC5246">[RFC5246]</a> connection to a host.  However, additional integrity protection is often desirable.  This might be for additional protection against failures (e.g., <a href="#SRI">[SRI]</a>) or because content needs to traverse multiple HTTPS-protected exchanges.</p>
-<p id="rfc.section.1.p.2">This document describes a &#8220;mi-sha256&#8221; content-encoding (see <a href="#encoding">Section 2</a>) that embeds a progressive, hash-based integrity check based on Merkle Hash Trees <a href="#MERKLE">[MERKLE]</a>.  This integrity scheme optionally supports including a digital signature over the integrity value.</p>
-<p id="rfc.section.1.p.3">The means of conveying the root proof used by this content encoding will depend on the requirements for deployment.  This document defines an MI header field (see <a href="#header">Section 3</a>) that can carry an integrity proof or signatures over the proof.</p>
+<p id="rfc.section.1.p.1">Integrity protection for HTTP content is highly valuable.  HTTPS <a href="#RFC2818">[RFC2818]</a> is the most common form of integrity protection deployed, but that requires a direct TLS <a href="#RFC5246">[RFC5246]</a> connection to a host.  However, additional integrity protection might be desirable for some use cases.  This might be for additional protection against failures or attack (see <a href="#SRI">[SRI]</a>) or because content needs to remain unmodified throughout multiple HTTPS-protected exchanges.</p>
+<p id="rfc.section.1.p.2">This document describes a &#8220;mi-sha256&#8221; content-encoding (see <a href="#encoding">Section 2</a>) that is a progressive, hash-based integrity check based on Merkle Hash Trees <a href="#MERKLE">[MERKLE]</a>.</p>
+<p id="rfc.section.1.p.3">The means of conveying the root integrity proof used by this content encoding will depend on deployment requirements.  This document defines an MI header field (see <a href="#header">Section 3</a>) that can carry an integrity proof.</p>
 <h2 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h2>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119">[RFC2119]</a>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#encoding" id="encoding">The &#8220;mi-sha256&#8221; HTTP Content Encoding</a></h1>
@@ -448,15 +444,16 @@ li, p {
 <p id="rfc.section.2.1.p.6">This structure permits the use of range requests <a href="#RFC7233">[RFC7233]</a>. However, to validate a given record, a contiguous sequence of records back to the start of the message is needed.</p>
 <h2 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a> <a href="#validating-integrity-proofs" id="validating-integrity-proofs">Validating Integrity Proofs</a></h2>
 <p id="rfc.section.2.2.p.1">A receiver of a message with the &#8220;mi-sha256&#8221; content-encoding applied first attempts to acquire the integrity proof for the first record.  If the MI header field is present, a value might be included there.</p>
-<p id="rfc.section.2.2.p.2">Then, the message is read into records of size &#8220;rs&#8221; (based on the value in the MI header field) plus 32 octets.  For each record:</p>
+<p id="rfc.section.2.2.p.2">Then, the message is read into records of size &#8220;rs&#8221; (based on the value in the MI header field) plus 32 octets.  The last record is between 1 and &#8220;rs&#8221; octets in length, if not then validation fails.  For each record:</p>
 <p/>
 
 <ol>
-  <li>Hash the record using SHA-256 with a single octet appended.  All records other than the last have an octet with value 0x1 appended, and the last record (which will be between 1 and &#8220;rs&#8221; octets in length) has an octet with value 0x0 appended.</li>
-  <li>For the first record:  <ol><li>If a signature is known for the integrity proof for the first record and the receiver is configured to validate a signature for this message, then the signature is validated with the output of the hash as the signed message.  If this check passes, then the signature applies to the entire message if subsequent checks succeed.</li><li>If the integrity proof for the first record is known, the integrity check passes if the output of SHA-256 is identical to the known value.</li><li>If an integrity proof for the first record is not available, treat the message as not having integrity protection.</li></ol></li>
-  <li>For all other records, check if the output of SHA-256 is equal to the expected value, then the integrity check passes.  The expected value is the last 32 octets of the previous record.</li>
+  <li>Hash the record using SHA-256 with a single octet appended:  <br/><br/> a. All records other than the last have an octet with a value of 0x1 appended.  <br/><br/> b. The last record has an octet with a value of 0x0 appended.</li>
+  <li>Compare the hash with the expected value:  <br/><br/> a. For the first record, the expected value might found in the MI header field and is otherwise provided through some external means.  <br/><br/> b. For records after the first, the expected value is the last 32 octets of the previous record.</li>
+  <li>If the hash is different, then this record and all subsequent records do not have integrity protection and this process ends.</li>
+  <li>If a record is valid, up to &#8220;rs&#8221; octets is passed on for processing.  In other words, the trailing 32 octets is removed from every record other than the last before being used.</li>
 </ol>
-<p id="rfc.section.2.2.p.4">If an integrity check fails, the message SHOULD be discarded and the exchange treated as an error unless explicitly configured otherwise.  For clients, treat this as equivalent to a server error; servers SHOULD generate a 400 status code.  However, if the integrity proof for the first record is not known, this check SHOULD NOT fail unless explicitly configured.</p>
+<p id="rfc.section.2.2.p.4">If an integrity check fails, the message SHOULD be discarded and the exchange treated as an error unless explicitly configured otherwise.  For clients, treat this as equivalent to a server error; servers SHOULD generate a 400 or other 4xx status code.  However, if the integrity proof for the first record is not known, this check SHOULD NOT fail unless explicitly configured.</p>
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#header" id="header">The MI HTTP Header Field</a></h1>
 <p id="rfc.section.3.p.1">The MI HTTP header field describes the message integrity content encoding(s) that have been applied to a payload body, and therefore how those content encoding(s) can be removed.</p>
 <p id="rfc.section.3.p.2">The MI header field uses the extended ABNF syntax defined in Section 1.2 of <a href="#RFC7230">[RFC7230]</a> and the <samp>parameter</samp> rule from <a href="#RFC7231">[RFC7231]</a>:</p>
@@ -472,19 +469,7 @@ li, p {
 
 <dl>
   <dt>p:</dt>
-  <dd style="margin-left: 8">The &#8220;p&#8221; parameter carries an integrity proof for the first record of the message.  This provides integrity for the entire message body.  This value is encoded using Base 64 Encoding with URL and Filename Safe Alphabet (Section 5 of <a href="#RFC4648">[RFC4648]</a>) with no padding.</dd>
-  <dt>p256ecdsa:</dt>
-  <dd style="margin-left: 8">The &#8220;p256ecdsa&#8221; parameter carries an ECDSA signature over the integrity proof for the first record of the message using P-256 <a href="#FIPS186">[FIPS186]</a> encoded as defined in <a href="#X9.62">[X9.62]</a> then further encoded using Base 64 Encoding with URL and Filename Safe Alphabet (Section 5 of <a href="#RFC4648">[RFC4648]</a>) with no padding.  If the receiver is expected to validate this signature, the &#8220;p&#8221; parameter MAY be ignored and omitted.  Note that this document doesn&#8217;t describe how a receiver might determine that a particular key is acceptable.  The input to the signature is the UTF-8 encoded string &#8220;MI: p256ecdsa&#8221;, a single zero-valued octet, and the integrity proof for the first record.  That is:</dd>
-</dl>
-<pre>
-  SignInput = "MI: p256ecdsa" || 0x0 || proof(r[0])
-</pre>
-<p id="rfc.section.3.1.p.3">Multiple values of this parameter might be provided.  If the &#8220;keyid&#8221; parameter is used to identify a key for each of these, the first &#8220;keyid&#8221; parameter to precede the &#8220;p256ecdsa&#8221; parameter is used.</p>
-<p/>
-
-<dl>
-  <dt>keyid:</dt>
-  <dd style="margin-left: 8">The &#8220;keyid&#8221; parameter optionally identifies the key that was used to generate a signature.</dd>
+  <dd style="margin-left: 8">The &#8220;p&#8221; parameter carries an integrity proof for the first record of the message.  This provides integrity for the entire message body.  This value is encoded using base64url encoding <a href="#RFC7515">[RFC7515]</a>.</dd>
   <dt>rs:</dt>
   <dd style="margin-left: 8">The &#8220;rs&#8221; parameter contains a positive decimal integer that describes the record size in octets.  This value MUST be greater than 0.  If the &#8220;rs&#8221; parameter is absent, the record size defaults to 4096 octets.</dd>
 </dl>
@@ -498,18 +483,12 @@ Content-Length: 41
 
 When I grow up, I want to be a watermelon
 </pre>
-<h2 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> <a href="#signature-example" id="signature-example">Signature Example</a></h2>
-<p id="rfc.section.4.2.p.1">The following example includes a signature over the integrity proof for the first record.  The public key for the signer is included in a Crypto-Key header field <a href="#I-D.ietf-httpbis-encryption-encoding">[I-D.ietf-httpbis-encryption-encoding]</a> using the uncompressed form <a href="#X9.62">[X9.62]</a>.  The example shows the value for the integrity proof in the MI header field, but this could be omitted if the client anticipates that the server will verify the signature.</p>
+<h2 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> <a href="#example-with-multiple-records" id="example-with-multiple-records">Example with Multiple Records</a></h2>
+<p id="rfc.section.4.2.p.1">This example shows the same message as above, but with a smaller record size (16 octets).  This results in two integrity proofs being included in the representation.</p>
 <pre>
 PUT /test HTTP/1.1
 Host: example.com
-Crypto-Key: keyid=x;
-            p256ecdsa=BIy6-8mZ48aKJpB54By_dK0pTv94s86yIVef6JhEC_bS
-                      Q-AnXQMX1oYG9dmCeezgJsmzQo52qJbfJEzIXpZiBSA
-MI: rs=16;
-    p=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4;
-    p256ecdsa=3pXnQrynYwnAW2T86MHel0bd6VgidWdQgb4SPGbxGGo
-              vemyiAdgNx5cKYkNSgz4c3vSGFt6_UoF2GLhWRePJeA
+MI: rs=16; p=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4
 Content-Length: 105
 
 When I grow up,
@@ -518,9 +497,7 @@ I want to be a w
 iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0
 atermelon
 </pre>
-<p id="rfc.section.4.2.p.2">The example shows the same message as above, but with a smaller record size (16 octets).  This results in two integrity proofs being included in the representation.</p>
-<p id="rfc.section.4.2.p.3">Since the inline integrity proofs contain non-printing characters, these are shown here using the Base 64 Encoding with URL and Filename Safe Alphabet <a href="#RFC4648">[RFC4648]</a> with new lines between the original text and integrity proofs.  Note that there is a single trailing space (0x20) on the first line.</p>
-<p id="rfc.section.4.2.p.4">The MI and Crypto-Key header fields are split across several lines to fit formatting constraints.</p>
+<p id="rfc.section.4.2.p.2">Since the inline integrity proofs contain non-printing characters, these are shown here using the base64url Encoding <a href="#RFC7515">[RFC7515]</a> with new lines between the original text and integrity proofs.  Note that there is a single trailing space (0x20) on the first line.</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
 <p id="rfc.section.5.p.1">The integrity of an entire message body depends on the means by which the integrity proof for the first record is protected.  If this value comes from the same place as the message, then this provides only limited protection against transport-level errors (something that TLS provides adequate protection against).</p>
 <p id="rfc.section.5.p.2">Separate protection for header fields might be provided by other means if the first record retrieved is the first record in the message, but range requests do not allow for this option.</p>
@@ -529,7 +506,6 @@ atermelon
 <p id="rfc.section.5.1.p.2">Whether it is safe to act on partial messages will depend on the nature of the message and the processing that is performed.</p>
 <h2 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#algorithm-agility" id="algorithm-agility">Algorithm Agility</a></h2>
 <p id="rfc.section.5.2.p.1">A new content encoding type is needed in order to define the use of a hash function other than SHA-256.</p>
-<p id="rfc.section.5.2.p.2">A new parameter name for the MI header field is needed to support new digital signature algorithms.</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
 <h2 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> <a href="#the-mi-sha256-http-content-encoding" id="the-mi-sha256-http-content-encoding">The &#8220;mi-sha256&#8221; HTTP Content Encoding</a></h2>
 <p id="rfc.section.6.1.p.1">This memo registers the &#8220;mi-sha256&#8221; HTTP content-coding in the HTTP Content Codings Registry, as detailed in <a href="#encoding">Section 2</a>.</p>
@@ -570,23 +546,7 @@ atermelon
   <li>Purpose: The value of the integrity proof for the first record.</li>
   <li>Reference: this document</li>
 </ul>
-<h3 id="rfc.section.6.3.2"><a href="#rfc.section.6.3.2">6.3.2.</a> <a href="#keyid-parameter" id="keyid-parameter">keyid parameter</a></h3>
-<p/>
-
-<ul>
-  <li>Parameter Name: keyid</li>
-  <li>Purpose: An identifier for the key that is used for signature over the integrity proof for the first record.</li>
-  <li>Reference: this document</li>
-</ul>
-<h3 id="rfc.section.6.3.3"><a href="#rfc.section.6.3.3">6.3.3.</a> <a href="#p256ecdsa-parameter" id="p256ecdsa-parameter">p256ecdsa parameter</a></h3>
-<p/>
-
-<ul>
-  <li>Parameter Name: p256ecdsa</li>
-  <li>Purpose: An ECDSA signature using P-256 over the integrity proof for the first record.</li>
-  <li>Reference: this document</li>
-</ul>
-<h3 id="rfc.section.6.3.4"><a href="#rfc.section.6.3.4">6.3.4.</a> <a href="#rs-parameter" id="rs-parameter">rs parameter</a></h3>
+<h3 id="rfc.section.6.3.2"><a href="#rfc.section.6.3.2">6.3.2.</a> <a href="#rs-parameter" id="rs-parameter">rs parameter</a></h3>
 <p/>
 
 <ul>
@@ -606,12 +566,6 @@ atermelon
     </tr>
     <tr>
       <td class="reference">
-        <b id="FIPS186">[FIPS186]</b>
-      </td>
-      <td class="top"><a>National Institute of Standards and Technology (NIST)</a>, "<a>Digital Signature Standard (DSS)</a>", NIST PUB 186-4 , July 2013.</td>
-    </tr>
-    <tr>
-      <td class="reference">
         <b id="MERKLE">[MERKLE]</b>
       </td>
       <td class="top"><a>Merkle, R.</a>, "<a>A Digital Signature Based on a Conventional Encryption Function</a>", International Crytology Conference - CRYPTO , 1987.</td>
@@ -621,12 +575,6 @@ atermelon
         <b id="RFC2119">[RFC2119]</b>
       </td>
       <td class="top"><a>Bradner, S.</a>, "<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC4648">[RFC4648]</b>
-      </td>
-      <td class="top"><a>Josefsson, S.</a>, "<a href="http://tools.ietf.org/html/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>", RFC 4648, DOI 10.17487/RFC4648, October 2006.</td>
     </tr>
     <tr>
       <td class="reference">
@@ -648,27 +596,15 @@ atermelon
     </tr>
     <tr>
       <td class="reference">
-        <b id="RFC7233">[RFC7233]</b>
+        <b id="RFC7515">[RFC7515]</b>
       </td>
-      <td class="top"><a>Fielding, R.</a>, <a>Lafon, Y.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7233">Hypertext Transfer Protocol (HTTP/1.1): Range Requests</a>", RFC 7233, DOI 10.17487/RFC7233, June 2014.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="X9.62">[X9.62]</b>
-      </td>
-      <td class="top"><a>ANSI</a>, "<a>Public Key Cryptography For The Financial Services Industry: The Elliptic Curve Digital Signature Algorithm (ECDSA)</a>", ANSI X9.62 , 1998.</td>
+      <td class="top"><a>Jones, M.</a>, <a>Bradley, J.</a> and <a>N. Sakimura</a>, "<a href="http://tools.ietf.org/html/rfc7515">JSON Web Signature (JWS)</a>", RFC 7515, DOI 10.17487/RFC7515, May 2015.</td>
     </tr>
   </tbody>
 </table>
 <h2 id="rfc.references.2"><a href="#rfc.references.2">7.2.</a> Informative References</h2>
 <table>
   <tbody>
-    <tr>
-      <td class="reference">
-        <b id="I-D.ietf-httpbis-encryption-encoding">[I-D.ietf-httpbis-encryption-encoding]</b>
-      </td>
-      <td class="top"><a>Thomson, M.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-httpbis-encryption-encoding-00">Encrypted Content-Encoding for HTTP</a>", Internet-Draft draft-ietf-httpbis-encryption-encoding-00, December 2015.</td>
-    </tr>
     <tr>
       <td class="reference">
         <b id="RFC2818">[RFC2818]</b>
@@ -689,6 +625,12 @@ atermelon
     </tr>
     <tr>
       <td class="reference">
+        <b id="RFC7233">[RFC7233]</b>
+      </td>
+      <td class="top"><a>Fielding, R.</a>, <a>Lafon, Y.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7233">Hypertext Transfer Protocol (HTTP/1.1): Range Requests</a>", RFC 7233, DOI 10.17487/RFC7233, June 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
         <b id="SRI">[SRI]</b>
       </td>
       <td class="top"><a>Akhawe, D.</a>, <a>Braun, F.</a>, <a>Marier, F.</a> and <a>J. Weinberger</a>, "<a href="https://w3c.github.io/webappsec-subresource-integrity/">Subresource Integrity</a>", W3C CR , November 2015.</td>
@@ -696,7 +638,7 @@ atermelon
   </tbody>
 </table>
 <h1 id="rfc.appendix.A"><a href="#rfc.appendix.A">Appendix A.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a></h1>
-<p id="rfc.section.A.p.1">David Benjamin and Erik Nygren both separately suggested that something like this might be valuable.</p>
+<p id="rfc.section.A.p.1">David Benjamin and Erik Nygren both separately suggested that something like this might be valuable.  Eric Rescorla provided useful feedback.</p>
 <h1 id="rfc.appendix.B"><a href="#rfc.appendix.B">Appendix B.</a> <a href="#faq" id="faq">FAQ</a></h1>
 <p/>
 
