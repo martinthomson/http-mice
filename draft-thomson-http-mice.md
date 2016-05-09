@@ -278,6 +278,7 @@ header field.
 ~~~
 HTTP/1.1 200 OK
 MI: p=dcRDgR2GM35DluAV13PzgnG6-pvQwPywfFvAu1UeFrs
+Content-Encoding: mi-sha256
 Content-Length: 41
 
 When I grow up, I want to be a watermelon
@@ -294,6 +295,7 @@ representation.
 PUT /test HTTP/1.1
 Host: example.com
 MI: rs=16; p=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4
+Content-Encoding: mi-sha256
 Content-Length: 105
 
 When I grow up,
