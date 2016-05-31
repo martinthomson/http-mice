@@ -169,7 +169,7 @@ an "rs" parameter that describes a different record size.
 
 The final encoded stream comprises of a record ("rs" octets in length), followed
 by the proof for the following record (32 octets).  This allows a receiver to
-validate and act upon each record after receiving the proof that follows it.
+validate and act upon each record after receiving the proof that precedes it.
 The final record is not followed by a proof.
 
 Note:
