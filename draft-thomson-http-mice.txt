@@ -4,8 +4,8 @@
 
 Network Working Group                                         M. Thomson
 Internet-Draft                                                   Mozilla
-Intended status: Standards Track                             May 9, 2016
-Expires: November 10, 2016
+Intended status: Standards Track                            May 31, 2016
+Expires: December 2, 2016
 
 
                    Merkle Integrity Content Encoding
@@ -34,7 +34,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 10, 2016.
+   This Internet-Draft will expire on December 2, 2016.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Thomson                 Expires November 10, 2016               [Page 1]
+Thomson                 Expires December 2, 2016                [Page 1]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Thomson                 Expires November 10, 2016               [Page 2]
+Thomson                 Expires December 2, 2016                [Page 2]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -165,7 +165,7 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires November 10, 2016               [Page 3]
+Thomson                 Expires December 2, 2016                [Page 3]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -214,14 +214,14 @@ Internet-Draft                    MICE                          May 2016
    The final encoded stream comprises of a record ("rs" octets in
    length), followed by the proof for the following record (32 octets).
    This allows a receiver to validate and act upon each record after
-   receiving the proof that follows it.  The final record is not
+   receiving the proof that precedes it.  The final record is not
    followed by a proof.
 
 
 
 
 
-Thomson                 Expires November 10, 2016               [Page 4]
+Thomson                 Expires December 2, 2016                [Page 4]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -277,7 +277,7 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires November 10, 2016               [Page 5]
+Thomson                 Expires December 2, 2016                [Page 5]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -333,7 +333,7 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires November 10, 2016               [Page 6]
+Thomson                 Expires December 2, 2016                [Page 6]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -389,7 +389,7 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires November 10, 2016               [Page 7]
+Thomson                 Expires December 2, 2016                [Page 7]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -445,7 +445,7 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires November 10, 2016               [Page 8]
+Thomson                 Expires December 2, 2016                [Page 8]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -501,7 +501,7 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires November 10, 2016               [Page 9]
+Thomson                 Expires December 2, 2016                [Page 9]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -557,7 +557,7 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires November 10, 2016              [Page 10]
+Thomson                 Expires December 2, 2016               [Page 10]
 
 Internet-Draft                    MICE                          May 2016
 
@@ -613,4 +613,4 @@ Author's Address
 
 
 
-Thomson                 Expires November 10, 2016              [Page 11]
+Thomson                 Expires December 2, 2016               [Page 11]
