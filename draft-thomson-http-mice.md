@@ -108,14 +108,14 @@ concatenation of the record, the integrity proof of all subsequent records, and
 a single octet with a value of 0x1:
 
 ~~~
-   proof(r[i]) = r[i] || proof(r[i+1]) || 0x1
+   proof(r[i]) = SHA-256(r[i] || proof(r[i+1]) || 0x1)
 ~~~
 
 The integrity proof for the final record is the hash of the record with a single
 octet with a value 0x0 appended:
 
 ~~~
-   proof(r[last]) = r[last] || 0x0
+   proof(r[last]) = SHA-256(r[last] || 0x0)
 ~~~
 
 {{ex-proofs}} shows the structure of the integrity proofs for a message that is
