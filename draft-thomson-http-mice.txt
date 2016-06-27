@@ -4,8 +4,8 @@
 
 Network Working Group                                         M. Thomson
 Internet-Draft                                                   Mozilla
-Intended status: Standards Track                            May 31, 2016
-Expires: December 2, 2016
+Intended status: Standards Track                           June 27, 2016
+Expires: December 29, 2016
 
 
                    Merkle Integrity Content Encoding
@@ -34,7 +34,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 2, 2016.
+   This Internet-Draft will expire on December 29, 2016.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Thomson                 Expires December 2, 2016                [Page 1]
+Thomson                 Expires December 29, 2016               [Page 1]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
 Table of Contents
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Thomson                 Expires December 2, 2016                [Page 2]
+Thomson                 Expires December 29, 2016               [Page 2]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
 1.1.  Notational Conventions
@@ -138,12 +138,12 @@ Internet-Draft                    MICE                          May 2016
    is the hash of the concatenation of the record, the integrity proof
    of all subsequent records, and a single octet with a value of 0x1:
 
-      proof(r[i]) = r[i] || proof(r[i+1]) || 0x1
+      proof(r[i]) = SHA-256(r[i] || proof(r[i+1]) || 0x1)
 
    The integrity proof for the final record is the hash of the record
    with a single octet with a value 0x0 appended:
 
-      proof(r[last]) = r[last] || 0x0
+      proof(r[last]) = SHA-256(r[last] || 0x0)
 
    Figure 1 shows the structure of the integrity proofs for a message
    that is split into 4 blocks: A, B, C, D).  As shown, the integrity
@@ -165,9 +165,9 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires December 2, 2016                [Page 3]
+Thomson                 Expires December 29, 2016               [Page 3]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
        proof(A)
@@ -221,9 +221,9 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires December 2, 2016                [Page 4]
+Thomson                 Expires December 29, 2016               [Page 4]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
    Note:  This content encoding increases the size of a message by 32
@@ -277,9 +277,9 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires December 2, 2016                [Page 5]
+Thomson                 Expires December 29, 2016               [Page 5]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
    For clients, treat this as equivalent to a server error; servers
@@ -333,9 +333,9 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires December 2, 2016                [Page 6]
+Thomson                 Expires December 29, 2016               [Page 6]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
    HTTP/1.1 200 OK
@@ -389,9 +389,9 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires December 2, 2016                [Page 7]
+Thomson                 Expires December 29, 2016               [Page 7]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
    need some 2mm copper cable, please send 100mm for evaluation
@@ -445,9 +445,9 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires December 2, 2016                [Page 8]
+Thomson                 Expires December 29, 2016               [Page 8]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
    Parameters" registry operates under an "Specification Required"
@@ -501,9 +501,9 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires December 2, 2016                [Page 9]
+Thomson                 Expires December 29, 2016               [Page 9]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
@@ -557,9 +557,9 @@ Internet-Draft                    MICE                          May 2016
 
 
 
-Thomson                 Expires December 2, 2016               [Page 10]
+Thomson                 Expires December 29, 2016              [Page 10]
 
-Internet-Draft                    MICE                          May 2016
+Internet-Draft                    MICE                         June 2016
 
 
 Appendix A.  Acknowledgements
@@ -613,4 +613,4 @@ Author's Address
 
 
 
-Thomson                 Expires December 2, 2016               [Page 11]
+Thomson                 Expires December 29, 2016              [Page 11]
