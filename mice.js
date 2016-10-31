@@ -48,11 +48,12 @@ process.stdin.on('end', function() {
   }
 
   var frmi = output.shift();
-  var rsarg = '';
-  if (rs !== 4096) {
-    rsarg = ';rs=' + rs;
-  }
-  process.stdout.write('MI: p=' + base64.encode(frmi) + rsarg + '\r\n\r\n', 'utf-8');
+  process.stdout.write('MI: mi-sha256=' + base64.encode(frmi) + '\r\n\r\n', 'utf-8');
+
+  var header = new Buffer(8);
+  header.writeUIntBE(rs, 0, 8);
+  process.stdout.write(header);
+
   output.forEach(function(d) {
     process.stdout.write(d);
   });

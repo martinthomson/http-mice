@@ -5,7 +5,7 @@ var crypto = require('crypto');
 
 var header;
 var input = new Buffer([]);
-var rs = 4096;
+var rs = NaN;
 var lastHash;
 var one = new Buffer([1]);
 
@@ -18,7 +18,8 @@ function parseParameter(a, x) {
       v = v.slice(1, v.length - 1);
     }
   }
-  a[x.slice(0, idx).trim()] = v;
+  var k = x.slice(0, idx).trim().toLowerCase();
+  a[k] = v;
   return a;
 }
 
@@ -31,7 +32,9 @@ function parseHeader(a, x) {
   if (idx < 0) {
     throw new Error('missing colon');
   }
-  a[x.slice(0, idx).trim()] = x.slice(idx + 1).split(',').map(parseParameters);
+  var k = x.slice(0, idx).trim().toLowerCase();
+  var v = x.slice(idx + 1).split(',').map(parseParameters);
+  a[k] = v;
   return a;
 }
 
@@ -47,11 +50,10 @@ function parseHeaderBlock() {
   var rawheaders = input.slice(0, idx).toString('utf-8');
   input = input.slice(idx + 4);
   header = rawheaders.split('\r\n').reduce(parseHeader, {});
-  if (!header.MI || !header.MI[0] || !header.MI[0].p) {
-    throw new Error('MI header field with p parameter missing');
+  if (!header.mi || !header.mi[0] || !header.mi[0]['mi-sha256']) {
+    throw new Error('MI header field with "mi-sha256" parameter missing');
   }
-  rs = parseInt(header.MI[0].rs, 10) || 4096;
-  lastHash = base64.decode(header.MI[0].p);
+  lastHash = base64.decode(header.mi[0]['mi-sha256']);
 }
 
 function check(data) {
@@ -68,6 +70,12 @@ function check(data) {
 function validateNext() {
   if (!lastHash) {
     return;
+  }
+  if (isNaN(rs)) {
+    if (input.length >= 8) {
+      rs = input.readUIntBE(0, 8);
+      input = input.slice(8);
+    }
   }
   while (input.length >= rs + 32) {
     check([input.slice(0, rs + 32), one]);
