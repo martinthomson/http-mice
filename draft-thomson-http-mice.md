@@ -149,8 +149,11 @@ arbitrary number of tuples of the integrity proof of the next record and then
 the record itself.  Thus, in {{ex-proofs}}, the body is:
 
 ~~~
-   A || proof(B) || B || proof(C) || C || proof(D) || D
+   rs || A || proof(B) || B || proof(C) || C || proof(D) || D
 ~~~
+
+Note:
+: The `||` operator is used to represent concatenation.
 
 A message that has a content length less than or equal to the content size does
 not include any inline proofs.  The proof for a message with a single record is
@@ -163,20 +166,20 @@ In order to produce the final content encoding the content of the message is
 split into equal-sized records.  The final record can contain less than the
 defined record size.
 
-The default record size for the "mi-sha256" content encoding is 4096 octets.
-This refers to the length of each data block.  The MI header field MAY contain
-an "rs" parameter that describes a different record size.
+The record size is included in the first 8 octets of the message as an unsigned
+64-bit integer.  This refers to the length of each data block.
 
-The final encoded stream comprises of a record ("rs" octets in length), followed
-by the proof for the following record (32 octets).  This allows a receiver to
-validate and act upon each record after receiving the proof that precedes it.
-The final record is not followed by a proof.
+The final encoded stream comprises of the record size ("rs"), plus a sequence of
+records, each "rs" octets in length.  Each record, other than the last, is
+followed by a 32 octet proof for the record that follows.  This allows a
+receiver to validate and act upon each record after receiving the proof that
+precedes it.  The final record is not followed by a proof.
 
 Note:
 
-: This content encoding increases the size of a message by 32 octets times the
-  length of the message divided by the record size, rounded up, less one.  That
-  is, 32 * (ceil(length / rs) - 1).
+: This content encoding increases the size of a message by 8 plus 32 octets
+  times the length of the message divided by the record size, rounded up, less
+  one.  That is, 8 + 32 * (ceil(length / rs) - 1).
 
 Constructing a message with the "mi-sha256" content encoding requires processing
 of the records in reverse order, inserting the proof derived from each record
@@ -193,9 +196,10 @@ A receiver of a message with the "mi-sha256" content-encoding applied first
 attempts to acquire the integrity proof for the first record.  If the MI header
 field is present, a value might be included there.
 
-Then, the message is read into records of size "rs" (based on the value in the
-MI header field) plus 32 octets.  The last record is between 1 and "rs" octets
-in length, if not then validation fails.  For each record:
+The first 8 octets are read as an unsigned 64-bit integer, "rs".  The remainder
+of the message is read into records of size "rs" (based on the value in the MI
+header field) plus 32 octets.  The last record is between 1 and "rs" octets in
+length, if not then validation fails.  For each record:
 
 1. Hash the record using SHA-256 with a single octet appended:
 
@@ -223,14 +227,13 @@ If an integrity check fails, the message SHOULD be discarded and the exchange
 treated as an error unless explicitly configured otherwise.  For clients, treat
 this as equivalent to a server error; servers SHOULD generate a 400 or other 4xx
 status code.  However, if the integrity proof for the first record is not known,
-this check SHOULD NOT fail unless explicitly configured.
+this check SHOULD NOT fail unless explicitly configured to do so.
 
 
 # The MI HTTP Header Field {#header}
 
-The MI HTTP header field describes the message integrity content encoding(s)
-that have been applied to a payload body, and therefore how those content
-encoding(s) can be removed.
+The MI HTTP header field carries message integrity proofs corresponding to
+content encoding(s) that have been applied to a payload body.
 
 The MI header field uses the extended ABNF syntax defined in Section 1.2 of
 [RFC7230] and the `parameter` rule from [RFC7231]:
@@ -254,17 +257,11 @@ the integrity proof for the first record by other means.
 The following parameters are used in validating content encoded with the
 "mi-sha256" content encoding:
 
-p:
+mi-sha256:
 
-: The "p" parameter carries an integrity proof for the first record of the
+: The "mi-sha256" parameter carries an integrity proof for the first record of the
   message.  This provides integrity for the entire message body.  This value is
   encoded using base64url encoding [RFC7515].
-
-rs:
-
-: The "rs" parameter contains a positive decimal integer that describes the
-  record size in octets.  This value MUST be greater than 0.  If the "rs"
-  parameter is absent, the record size defaults to 4096 octets.
 
 
 # Examples
@@ -273,15 +270,16 @@ rs:
 
 The following example contains a short message.  This contains just a single
 record, so there are no inline integrity proofs, just a single value in a MI
-header field.
+header field.  The record size is prepended to the message body (shown here in
+angle brackets).
 
 ~~~
 HTTP/1.1 200 OK
-MI: p=dcRDgR2GM35DluAV13PzgnG6-pvQwPywfFvAu1UeFrs
+MI: mi-sha256=dcRDgR2GM35DluAV13PzgnG6-pvQwPywfFvAu1UeFrs
 Content-Encoding: mi-sha256
-Content-Length: 41
+Content-Length: 49
 
-When I grow up, I want to be a watermelon
+<0x0000000000000029>When I grow up, I want to be a watermelon
 ~~~
 
 
@@ -294,11 +292,11 @@ representation.
 ~~~
 PUT /test HTTP/1.1
 Host: example.com
-MI: rs=16; p=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4
+MI: mi-sha256=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4
 Content-Encoding: mi-sha256
-Content-Length: 105
+Content-Length: 113
 
-When I grow up,
+<0x0000000000000010>When I grow up,
 OElbplJlPK-Rv6JNK6p5_515IaoPoZo-2elWL7OQ60A
 I want to be a w
 iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0
@@ -306,7 +304,7 @@ atermelon
 ~~~
 
 Since the inline integrity proofs contain non-printing characters, these are
-shown here using the base64url Encoding [RFC7515] with new lines between the
+shown here using the base64url encoding [RFC7515] with new lines between the
 original text and integrity proofs.  Note that there is a single trailing space
 (0x20) on the first line.
 
@@ -385,16 +383,10 @@ Entries in this registry are expected to include the following information:
 
 The initial contents of this registry are:
 
-### p parameter
+### mi-sha256 parameter
 
-* Parameter Name: p
+* Parameter Name: mi-sha256
 * Purpose: The value of the integrity proof for the first record.
-* Reference: this document
-
-### rs parameter
-
-* Parameter Name: rs
-* Purpose: The size of the records used for progressive integrity protection.
 * Reference: this document
 
 
@@ -403,7 +395,8 @@ The initial contents of this registry are:
 # Acknowledgements
 
 David Benjamin and Erik Nygren both separately suggested that something like
-this might be valuable.  Eric Rescorla provided useful feedback.
+this might be valuable.  James Manger and Eric Rescorla provided useful
+feedback.
 
 
 # FAQ
@@ -424,3 +417,13 @@ this might be valuable.  Eric Rescorla provided useful feedback.
    best option of the three.  The expectation is that this will be useful for
    content that is generated once and sent multiple times, since the onerous
    backwards processing requirement can be amortized.
+
+3. Why not just generate a table of hashes?
+
+   An alternative design includes a header that comprises hashes of every block
+   of the message.  The final proof is a hash of that table.  This has the
+   advantage that the table can be built in any order.  The disadvantage is that
+   a receiver needs to store the table while processing content, whereas a
+   chained hash can be processed with a single stored hash worth of state no
+   matter how many blocks are present.  The chained hash is also smaller by 32
+   octets.
