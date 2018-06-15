@@ -64,6 +64,18 @@ partial representation, allowing a recipient to process a message as it is
 delivered while retaining strong integrity protection.
 
 
+--- note_Note_to_Readers
+
+*RFC EDITOR: please remove this section before publication*
+
+Discussion of this draft takes place on the HTTP working group mailing list
+(ietf-http-wg@w3.org), which is archived at
+<https://lists.w3.org/Archives/Public/ietf-http-wg/>.
+
+The source code and issues list for this draft can be found at
+<https://github.com/martinthomson/http-mice>.
+
+
 --- middle
 
 # Introduction
