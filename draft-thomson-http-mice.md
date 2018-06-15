@@ -2,7 +2,6 @@
 title: Merkle Integrity Content Encoding
 abbrev: MICE
 docname: draft-thomson-http-mice-latest
-date: 2016
 category: std
 
 ipr: trust200902
