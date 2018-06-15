@@ -174,6 +174,13 @@ As a special case, the encoding of an empty payload is itself an empty message
 (i.e. it omits the initial record size), and its integrity proof is
 SHA-256("\0").
 
+*RFC EDITOR: Please remove the next paragraph before publication.*
+
+Implementations of drafts of this specification MUST implement a content
+encoding named "mi-sha256-draft#" instead of the "mi-sha256" content encoding
+specified by the final RFC, with "#" replaced by the draft number being
+implemented. For example, implementations of draft-thomson-http-mice-03 would
+implement "mi-sha256-draft3".
 
 ## Content Encoding Structure {#records}
 
@@ -273,6 +280,13 @@ which they were applied.
 The MI header MAY be omitted if the sender intends for the receiver to acquire
 the integrity proof for the first record by other means.
 
+*RFC EDITOR: Please remove the next paragraph before publication.*
+
+Implementations of drafts of this specification MUST implement an HTTP header
+field named "MI-Draft#" instead of the "MI" header field specified by the final
+RFC, with "#" replaced by the draft number being implemented. For example,
+implementations of draft-thomson-http-mice-03 would implement "MI-Draft3".
+
 
 ## MI Header Field Parameters
 
@@ -285,6 +299,11 @@ mi-sha256:
   message.  This provides integrity for the entire message body.  This value is
   encoded using base64url encoding [RFC7515].
 
+*RFC EDITOR: Please remove the next paragraph before publication.*
+
+Implementations of drafts of this specification MUST use a parameter named the
+same as the "mi-sha256-draft#" content encoding they implement, with the meaning
+described for "mi-sha256" above.
 
 # Examples
 
