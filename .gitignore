@@ -9,6 +9,7 @@
 venv/
 issues.json
 pulls.json
+.targets.mk
 lib
 draft-thomson-http-mice.xml
 node_modules
