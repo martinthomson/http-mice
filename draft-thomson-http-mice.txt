@@ -4,8 +4,8 @@
 
 Network Working Group                                         M. Thomson
 Internet-Draft                                                   Mozilla
-Intended status: Standards Track                        October 31, 2016
-Expires: May 4, 2017
+Intended status: Standards Track                           June 25, 2018
+Expires: December 27, 2018
 
 
                    Merkle Integrity Content Encoding
@@ -19,6 +19,17 @@ Abstract
    recipient to process a message as it is delivered while retaining
    strong integrity protection.
 
+Note to Readers
+
+   _RFC EDITOR: please remove this section before publication_
+
+   Discussion of this draft takes place on the HTTP working group
+   mailing list (ietf-http-wg@w3.org), which is archived at
+   https://lists.w3.org/Archives/Public/ietf-http-wg/ [1].
+
+   The source code and issues list for this draft can be found at
+   https://github.com/martinthomson/http-mice [2].
+
 Status of This Memo
 
    This Internet-Draft is submitted in full conformance with the
@@ -27,36 +38,40 @@ Status of This Memo
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
    working documents as Internet-Drafts.  The list of current Internet-
-   Drafts is at http://datatracker.ietf.org/drafts/current/.
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 4, 2017.
+   This Internet-Draft will expire on December 27, 2018.
+
+
+
+
+
+
+
+Thomson                 Expires December 27, 2018               [Page 1]
+
+Internet-Draft                    MICE                         June 2018
+
 
 Copyright Notice
 
-   Copyright (c) 2016 IETF Trust and the persons identified as the
+   Copyright (c) 2018 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
-   (http://trustee.ietf.org/license-info) in effect on the date of
+   (https://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
    include Simplified BSD License text as described in Section 4.e of
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
-
-
-
-Thomson                    Expires May 4, 2017                  [Page 1]
-
-Internet-Draft                    MICE                      October 2016
-
 
 Table of Contents
 
@@ -71,17 +86,18 @@ Table of Contents
      4.1.  Simple Example  . . . . . . . . . . . . . . . . . . . . .   6
      4.2.  Example with Multiple Records . . . . . . . . . . . . . .   7
    5.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
-     5.1.  Message Truncation  . . . . . . . . . . . . . . . . . . .   7
+     5.1.  Message Truncation  . . . . . . . . . . . . . . . . . . .   8
      5.2.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   8
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
      6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   8
      6.2.  MI Header Field . . . . . . . . . . . . . . . . . . . . .   8
-     6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   8
+     6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   9
        6.3.1.  mi-sha256 parameter . . . . . . . . . . . . . . . . .   9
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
      7.2.  Informative References  . . . . . . . . . . . . . . . . .  10
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  10
+     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  11
    Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  11
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
 
@@ -90,6 +106,14 @@ Table of Contents
    Integrity protection for HTTP content is highly valuable.  HTTPS
    [RFC2818] is the most common form of integrity protection deployed,
    but that requires a direct TLS [RFC5246] connection to a host.
+
+
+
+Thomson                 Expires December 27, 2018               [Page 2]
+
+Internet-Draft                    MICE                         June 2018
+
+
    However, additional integrity protection might be desirable for some
    use cases.  This might be for additional protection against failures
    or attack (see [SRI]) or because content needs to remain unmodified
@@ -103,16 +127,6 @@ Table of Contents
    encoding will depend on deployment requirements.  This document
    defines an MI header field (see Section 3) that can carry an
    integrity proof.
-
-
-
-
-
-
-Thomson                    Expires May 4, 2017                  [Page 2]
-
-Internet-Draft                    MICE                      October 2016
-
 
 1.1.  Notational Conventions
 
@@ -148,27 +162,16 @@ Internet-Draft                    MICE                      October 2016
    Figure 1 shows the structure of the integrity proofs for a message
    that is split into 4 blocks: A, B, C, D).  As shown, the integrity
    proof for the entire message (that is, "proof(A)") is derived from
+
+
+
+Thomson                 Expires December 27, 2018               [Page 3]
+
+Internet-Draft                    MICE                         June 2018
+
+
    the content of the first block (A), plus the value of the proof for
    the second and subsequent blocks.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Thomson                    Expires May 4, 2017                  [Page 3]
-
-Internet-Draft                    MICE                      October 2016
-
 
        proof(A)
          /\
@@ -215,16 +218,17 @@ Internet-Draft                    MICE                      October 2016
    The final encoded stream comprises of the record size ("rs"), plus a
    sequence of records, each "rs" octets in length.  Each record, other
    than the last, is followed by a 32 octet proof for the record that
+
+
+
+Thomson                 Expires December 27, 2018               [Page 4]
+
+Internet-Draft                    MICE                         June 2018
+
+
    follows.  This allows a receiver to validate and act upon each record
    after receiving the proof that precedes it.  The final record is not
    followed by a proof.
-
-
-
-Thomson                    Expires May 4, 2017                  [Page 4]
-
-Internet-Draft                    MICE                      October 2016
-
 
    Note:  This content encoding increases the size of a message by 8
       plus 32 octets times the length of the message divided by the
@@ -270,17 +274,17 @@ Internet-Draft                    MICE                      October 2016
    3.  If the hash is different, then this record and all subsequent
        records do not have integrity protection and this process ends.
 
+
+
+
+Thomson                 Expires December 27, 2018               [Page 5]
+
+Internet-Draft                    MICE                         June 2018
+
+
    4.  If a record is valid, up to "rs" octets is passed on for
        processing.  In other words, the trailing 32 octets is removed
        from every record other than the last before being used.
-
-
-
-
-Thomson                    Expires May 4, 2017                  [Page 5]
-
-Internet-Draft                    MICE                      October 2016
-
 
    If an integrity check fails, the message SHOULD be discarded and the
    exchange treated as an error unless explicitly configured otherwise.
@@ -325,18 +329,17 @@ Internet-Draft                    MICE                      October 2016
 
    The following example contains a short message.  This contains just a
    single record, so there are no inline integrity proofs, just a single
+
+
+
+
+Thomson                 Expires December 27, 2018               [Page 6]
+
+Internet-Draft                    MICE                         June 2018
+
+
    value in a MI header field.  The record size is prepended to the
    message body (shown here in angle brackets).
-
-
-
-
-
-
-Thomson                    Expires May 4, 2017                  [Page 6]
-
-Internet-Draft                    MICE                      October 2016
-
 
    HTTP/1.1 200 OK
    MI: mi-sha256=dcRDgR2GM35DluAV13PzgnG6-pvQwPywfFvAu1UeFrs
@@ -380,20 +383,23 @@ Internet-Draft                    MICE                      October 2016
    means if the first record retrieved is the first record in the
    message, but range requests do not allow for this option.
 
+
+
+
+
+
+
+Thomson                 Expires December 27, 2018               [Page 7]
+
+Internet-Draft                    MICE                         June 2018
+
+
 5.1.  Message Truncation
 
    This integrity scheme permits the detection of truncated messages.
    However, it enables and even encourages processing of messages prior
    to receiving an complete message.  Actions taken on a partial message
    can produce incorrect results.  For example, a message could say "I
-
-
-
-Thomson                    Expires May 4, 2017                  [Page 7]
-
-Internet-Draft                    MICE                      October 2016
-
-
    need some 2mm copper cable, please send 100mm for evaluation
    purposes" then be truncated to "I need some 2mm copper cable, please
    send 100m".  A network-based attacker might be able to force this
@@ -437,19 +443,18 @@ Internet-Draft                    MICE                      October 2016
 
    o  Notes:
 
+
+
+Thomson                 Expires December 27, 2018               [Page 8]
+
+Internet-Draft                    MICE                         June 2018
+
+
 6.3.  The HTTP MI Parameter Registry
 
    This memo establishes a registry for parameters used by the "MI"
    header field under the "Hypertext Transfer Protocol (HTTP)
    Parameters" grouping.  The "Hypertext Transfer Protocol (HTTP) MI
-
-
-
-Thomson                    Expires May 4, 2017                  [Page 8]
-
-Internet-Draft                    MICE                      October 2016
-
-
    Parameters" registry operates under an "Specification Required"
    policy [RFC5226].
 
@@ -490,77 +495,78 @@ Internet-Draft                    MICE                      October 2016
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
-              <http://www.rfc-editor.org/info/rfc2119>.
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+
+
+
+
+Thomson                 Expires December 27, 2018               [Page 9]
+
+Internet-Draft                    MICE                         June 2018
+
 
    [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
-              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
+              IANA Considerations Section in RFCs", RFC 5226,
               DOI 10.17487/RFC5226, May 2008,
-              <http://www.rfc-editor.org/info/rfc5226>.
-
-
-
-
-
-Thomson                    Expires May 4, 2017                  [Page 9]
-
-Internet-Draft                    MICE                      October 2016
-
+              <https://www.rfc-editor.org/info/rfc5226>.
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <http://www.rfc-editor.org/info/rfc7230>.
+              <https://www.rfc-editor.org/info/rfc7230>.
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
               DOI 10.17487/RFC7231, June 2014,
-              <http://www.rfc-editor.org/info/rfc7231>.
+              <https://www.rfc-editor.org/info/rfc7231>.
 
    [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web
               Signature (JWS)", RFC 7515, DOI 10.17487/RFC7515, May
-              2015, <http://www.rfc-editor.org/info/rfc7515>.
+              2015, <https://www.rfc-editor.org/info/rfc7515>.
 
 7.2.  Informative References
 
    [RFC2818]  Rescorla, E., "HTTP Over TLS", RFC 2818,
               DOI 10.17487/RFC2818, May 2000,
-              <http://www.rfc-editor.org/info/rfc2818>.
+              <https://www.rfc-editor.org/info/rfc2818>.
 
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
               DOI 10.17487/RFC5246, August 2008,
-              <http://www.rfc-editor.org/info/rfc5246>.
+              <https://www.rfc-editor.org/info/rfc5246>.
 
    [RFC6962]  Laurie, B., Langley, A., and E. Kasper, "Certificate
               Transparency", RFC 6962, DOI 10.17487/RFC6962, June 2013,
-              <http://www.rfc-editor.org/info/rfc6962>.
+              <https://www.rfc-editor.org/info/rfc6962>.
 
    [RFC7233]  Fielding, R., Ed., Lafon, Y., Ed., and J. Reschke, Ed.,
               "Hypertext Transfer Protocol (HTTP/1.1): Range Requests",
               RFC 7233, DOI 10.17487/RFC7233, June 2014,
-              <http://www.rfc-editor.org/info/rfc7233>.
+              <https://www.rfc-editor.org/info/rfc7233>.
 
    [SRI]      Akhawe, D., Braun, F., Marier, F., and J. Weinberger,
               "Subresource Integrity", W3C CR , November 2015,
               <https://w3c.github.io/webappsec-subresource-integrity/>.
+
+7.3.  URIs
+
+   [1] https://lists.w3.org/Archives/Public/ietf-http-wg/
+
+   [2] https://github.com/martinthomson/http-mice
+
+
+
+Thomson                 Expires December 27, 2018              [Page 10]
+
+Internet-Draft                    MICE                         June 2018
+
 
 Appendix A.  Acknowledgements
 
    David Benjamin and Erik Nygren both separately suggested that
    something like this might be valuable.  James Manger and Eric
    Rescorla provided useful feedback.
-
-
-
-
-
-
-
-
-Thomson                    Expires May 4, 2017                 [Page 10]
-
-Internet-Draft                    MICE                      October 2016
-
 
 Appendix B.  FAQ
 
@@ -607,10 +613,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-Thomson                    Expires May 4, 2017                 [Page 11]
+Thomson                 Expires December 27, 2018              [Page 11]
