@@ -2,7 +2,7 @@
 
 This is the working area for the Individual internet-draft, "Merkle Integrity Content Encoding".
 
-* [Editor's copy](https://.github.io//)
+* [Editor's copy](https://martinthomson.github.io/http-mice/)
 * [Individual Draft](https://tools.ietf.org/html/draft-thomson-http-mice)
 
 
