@@ -8,6 +8,7 @@
 .refcache
 venv/
 issues.json
+pulls.json
 lib
 draft-thomson-http-mice.xml
 node_modules
