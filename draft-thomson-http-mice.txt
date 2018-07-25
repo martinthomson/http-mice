@@ -4,8 +4,8 @@
 
 Network Working Group                                         M. Thomson
 Internet-Draft                                                   Mozilla
-Intended status: Standards Track                           June 25, 2018
-Expires: December 27, 2018
+Intended status: Standards Track                           July 25, 2018
+Expires: January 26, 2019
 
 
                    Merkle Integrity Content Encoding
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 27, 2018.
+   This Internet-Draft will expire on January 26, 2019.
 
 
 
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Thomson                 Expires December 27, 2018               [Page 1]
+Thomson                 Expires January 26, 2019                [Page 1]
 
-Internet-Draft                    MICE                         June 2018
+Internet-Draft                    MICE                         July 2018
 
 
 Copyright Notice
@@ -82,24 +82,24 @@ Table of Contents
      2.2.  Validating Integrity Proofs . . . . . . . . . . . . . . .   5
    3.  The MI HTTP Header Field  . . . . . . . . . . . . . . . . . .   6
      3.1.  MI Header Field Parameters  . . . . . . . . . . . . . . .   6
-   4.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   6
-     4.1.  Simple Example  . . . . . . . . . . . . . . . . . . . . .   6
+   4.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     4.1.  Simple Example  . . . . . . . . . . . . . . . . . . . . .   7
      4.2.  Example with Multiple Records . . . . . . . . . . . . . .   7
-   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
      5.1.  Message Truncation  . . . . . . . . . . . . . . . . . . .   8
      5.2.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   8
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
      6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   8
-     6.2.  MI Header Field . . . . . . . . . . . . . . . . . . . . .   8
+     6.2.  MI Header Field . . . . . . . . . . . . . . . . . . . . .   9
      6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   9
        6.3.1.  mi-sha256 parameter . . . . . . . . . . . . . . . . .   9
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
      7.2.  Informative References  . . . . . . . . . . . . . . . . .  10
-     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
+     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  11
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  11
    Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  11
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  12
 
 1.  Introduction
 
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Thomson                 Expires December 27, 2018               [Page 2]
+Thomson                 Expires January 26, 2019                [Page 2]
 
-Internet-Draft                    MICE                         June 2018
+Internet-Draft                    MICE                         July 2018
 
 
    However, additional integrity protection might be desirable for some
@@ -165,9 +165,9 @@ Internet-Draft                    MICE                         June 2018
 
 
 
-Thomson                 Expires December 27, 2018               [Page 3]
+Thomson                 Expires January 26, 2019                [Page 3]
 
-Internet-Draft                    MICE                         June 2018
+Internet-Draft                    MICE                         July 2018
 
 
    the content of the first block (A), plus the value of the proof for
@@ -192,9 +192,10 @@ Internet-Draft                    MICE                         June 2018
 
            Figure 1: Proof structure for a message with 4 blocks
 
-   The final encoded message is formed from the first record, followed
-   by an arbitrary number of tuples of the integrity proof of the next
-   record and then the record itself.  Thus, in Figure 1, the body is:
+   The final encoded message is formed from the record size and first
+   record, followed by an arbitrary number of tuples of the integrity
+   proof of the next record and then the record itself.  Thus, in
+   Figure 1, the body is:
 
       rs || A || proof(B) || B || proof(C) || C || proof(D) || D
 
@@ -205,27 +206,33 @@ Internet-Draft                    MICE                         June 2018
    with a single record is simply the hash of the body plus a trailing
    zero octet.
 
+   As a special case, the encoding of an empty payload is itself an
+   empty message (i.e. it omits the initial record size), and its
+   integrity proof is SHA-256("\0").
+
 2.1.  Content Encoding Structure
 
    In order to produce the final content encoding the content of the
    message is split into equal-sized records.  The final record can
    contain less than the defined record size.
 
-   The record size is included in the first 8 octets of the message as
-   an unsigned 64-bit integer.  This refers to the length of each data
-   block.
+
+
+
+
+
+Thomson                 Expires January 26, 2019                [Page 4]
+
+Internet-Draft                    MICE                         July 2018
+
+
+   For non-empty payloads, the record size is included in the first 8
+   octets of the message as an unsigned 64-bit integer.  This refers to
+   the length of each data block.
 
    The final encoded stream comprises of the record size ("rs"), plus a
    sequence of records, each "rs" octets in length.  Each record, other
    than the last, is followed by a 32 octet proof for the record that
-
-
-
-Thomson                 Expires December 27, 2018               [Page 4]
-
-Internet-Draft                    MICE                         June 2018
-
-
    follows.  This allows a receiver to validate and act upon each record
    after receiving the proof that precedes it.  The final record is not
    followed by a proof.
@@ -246,41 +253,46 @@ Internet-Draft                    MICE                         June 2018
 2.2.  Validating Integrity Proofs
 
    A receiver of a message with the "mi-sha256" content-encoding applied
-   first attempts to acquire the integrity proof for the first record.
-   If the MI header field is present, a value might be included there.
+   first attempts to acquire the integrity proof for the first record,
+   "top-proof".  If the MI header field is present, a value might be
+   included there.
 
-   The first 8 octets are read as an unsigned 64-bit integer, "rs".  The
-   remainder of the message is read into records of size "rs" (based on
-   the value in the MI header field) plus 32 octets.  The last record is
-   between 1 and "rs" octets in length, if not then validation fails.
-   For each record:
+   The receiver attempts to read the first 8 octets as an unsigned
+   64-bit integer, "rs".  If 8 octets aren't available then:
+
+   o  If 0 octets are available, and "top-proof" is SHA-256("\0") (whose
+      base64url encoding is "bjQLnP-zepicpUTmu3gKLHiQHT-
+      zNzh2hRGjBhevoB0"), then return a 0-length decoded payload.
+
+   o  Otherwise, validation fails.
+
+   The remainder of the message is read into records of size "rs" plus
+   32 octets.  The last record is between 1 and "rs" octets in length,
+   if not then validation fails.  For each record:
 
    1.  Hash the record using SHA-256 with a single octet appended:
 
        a.  All records other than the last have an octet with a value of
        0x1 appended.
 
+
+
+Thomson                 Expires January 26, 2019                [Page 5]
+
+Internet-Draft                    MICE                         July 2018
+
+
        b.  The last record has an octet with a value of 0x0 appended.
 
    2.  Compare the hash with the expected value:
 
-       a.  For the first record, the expected value might found in the
-       MI header field and is otherwise provided through some external
-       means.
+       a.  For the first record, the expected value is "top-proof".
 
        b.  For records after the first, the expected value is the last
        32 octets of the previous record.
 
    3.  If the hash is different, then this record and all subsequent
        records do not have integrity protection and this process ends.
-
-
-
-
-Thomson                 Expires December 27, 2018               [Page 5]
-
-Internet-Draft                    MICE                         June 2018
-
 
    4.  If a record is valid, up to "rs" octets is passed on for
        processing.  In other words, the trailing 32 octets is removed
@@ -318,6 +330,14 @@ Internet-Draft                    MICE                         June 2018
    The following parameters are used in validating content encoded with
    the "mi-sha256" content encoding:
 
+
+
+
+Thomson                 Expires January 26, 2019                [Page 6]
+
+Internet-Draft                    MICE                         July 2018
+
+
    mi-sha256:  The "mi-sha256" parameter carries an integrity proof for
       the first record of the message.  This provides integrity for the
       entire message body.  This value is encoded using base64url
@@ -329,15 +349,6 @@ Internet-Draft                    MICE                         June 2018
 
    The following example contains a short message.  This contains just a
    single record, so there are no inline integrity proofs, just a single
-
-
-
-
-Thomson                 Expires December 27, 2018               [Page 6]
-
-Internet-Draft                    MICE                         June 2018
-
-
    value in a MI header field.  The record size is prepended to the
    message body (shown here in angle brackets).
 
@@ -371,6 +382,18 @@ Internet-Draft                    MICE                         June 2018
    lines between the original text and integrity proofs.  Note that
    there is a single trailing space (0x20) on the first line.
 
+
+
+
+
+
+
+
+Thomson                 Expires January 26, 2019                [Page 7]
+
+Internet-Draft                    MICE                         July 2018
+
+
 5.  Security Considerations
 
    The integrity of an entire message body depends on the means by which
@@ -382,17 +405,6 @@ Internet-Draft                    MICE                         June 2018
    Separate protection for header fields might be provided by other
    means if the first record retrieved is the first record in the
    message, but range requests do not allow for this option.
-
-
-
-
-
-
-
-Thomson                 Expires December 27, 2018               [Page 7]
-
-Internet-Draft                    MICE                         June 2018
-
 
 5.1.  Message Truncation
 
@@ -428,6 +440,16 @@ Internet-Draft                    MICE                         June 2018
 
    o  Reference: this specification
 
+
+
+
+
+
+Thomson                 Expires January 26, 2019                [Page 8]
+
+Internet-Draft                    MICE                         July 2018
+
+
 6.2.  MI Header Field
 
    This memo registers the "MI" HTTP header field in the Permanent
@@ -442,13 +464,6 @@ Internet-Draft                    MICE                         June 2018
    o  Reference: this specification
 
    o  Notes:
-
-
-
-Thomson                 Expires December 27, 2018               [Page 8]
-
-Internet-Draft                    MICE                         June 2018
-
 
 6.3.  The HTTP MI Parameter Registry
 
@@ -480,6 +495,17 @@ Internet-Draft                    MICE                         June 2018
 
 7.  References
 
+
+
+
+
+
+
+Thomson                 Expires January 26, 2019                [Page 9]
+
+Internet-Draft                    MICE                         July 2018
+
+
 7.1.  Normative References
 
    [FIPS180-4]
@@ -496,15 +522,6 @@ Internet-Draft                    MICE                         June 2018
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
-
-
-
-
-
-Thomson                 Expires December 27, 2018               [Page 9]
-
-Internet-Draft                    MICE                         June 2018
-
 
    [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
               IANA Considerations Section in RFCs", RFC 5226,
@@ -536,6 +553,15 @@ Internet-Draft                    MICE                         June 2018
               DOI 10.17487/RFC5246, August 2008,
               <https://www.rfc-editor.org/info/rfc5246>.
 
+
+
+
+
+Thomson                 Expires January 26, 2019               [Page 10]
+
+Internet-Draft                    MICE                         July 2018
+
+
    [RFC6962]  Laurie, B., Langley, A., and E. Kasper, "Certificate
               Transparency", RFC 6962, DOI 10.17487/RFC6962, June 2013,
               <https://www.rfc-editor.org/info/rfc6962>.
@@ -554,13 +580,6 @@ Internet-Draft                    MICE                         June 2018
    [1] https://lists.w3.org/Archives/Public/ietf-http-wg/
 
    [2] https://github.com/martinthomson/http-mice
-
-
-
-Thomson                 Expires December 27, 2018              [Page 10]
-
-Internet-Draft                    MICE                         June 2018
-
 
 Appendix A.  Acknowledgements
 
@@ -591,6 +610,14 @@ Appendix B.  FAQ
 
    3.  Why not just generate a table of hashes?
 
+
+
+
+Thomson                 Expires January 26, 2019               [Page 11]
+
+Internet-Draft                    MICE                         July 2018
+
+
        An alternative design includes a header that comprises hashes of
        every block of the message.  The final proof is a hash of that
        table.  This has the advantage that the table can be built in any
@@ -613,4 +640,33 @@ Author's Address
 
 
 
-Thomson                 Expires December 27, 2018              [Page 11]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thomson                 Expires January 26, 2019               [Page 12]

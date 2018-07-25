@@ -26,7 +26,7 @@ body {
   font-weight: bold;
   color: #333;
   line-height: 100%;
-  margin: 0.8em 0 0.3em;
+  margin: 1.2em 0 0.3em;
 }
 .title, #rfc\.title h1 { font-size: 32px; }
 h1, section h1, h2, section h2, section h3, nav h2 { font-size: 20px; }
@@ -165,12 +165,17 @@ a[href]:hover {
   background-color: #eee;
 }
 
-ol, ul, li, p {
+p, ol, ul, li {
   padding: 0;
-  margin: 0.5em 0 0.5em 2em;
 }
-li, p {
-  margin-left: 0;
+p {
+  margin: 0.5em 0;
+}
+ol, ul {
+  margin: 0.2em 0 0.2em 2em;
+}
+li {
+  margin: 0.2em 0;
 }
 address {
   font-style: normal;
@@ -302,12 +307,12 @@ ul.toc li {
 <link href="#rfc.authors" rel="Chapter">
 
 
-  <meta name="generator" content="xml2rfc version 2.9.8 - https://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.9.9 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Thomson, M." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-thomson-http-mice-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2018-06-25" />
+  <meta name="dct.issued" scheme="ISO8601" content="2018-07-25" />
   <meta name="dct.abstract" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection." />
   <meta name="description" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection." />
 
@@ -328,10 +333,10 @@ ul.toc li {
 </tr>
 <tr>
 <td class="left">Intended status: Standards Track</td>
-<td class="right">June 25, 2018</td>
+<td class="right">July 25, 2018</td>
 </tr>
 <tr>
-<td class="left">Expires: December 27, 2018</td>
+<td class="left">Expires: January 26, 2019</td>
 <td class="right"></td>
 </tr>
 
@@ -352,7 +357,7 @@ ul.toc li {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on December 27, 2018.</p>
+<p>This Internet-Draft will expire on January 26, 2019.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2018 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -459,7 +464,7 @@ ul.toc li {
                  D
 </pre>
 <p class="figure">Figure 1: Proof structure for a message with 4 blocks</p>
-<p id="rfc.section.2.p.6">The final encoded message is formed from the first record, followed by an arbitrary number of tuples of the integrity proof of the next record and then the record itself.  Thus, in <a href="#ex-proofs" class="xref">Figure 1</a>, the body is:</p>
+<p id="rfc.section.2.p.6">The final encoded message is formed from the record size and first record, followed by an arbitrary number of tuples of the integrity proof of the next record and then the record itself.  Thus, in <a href="#ex-proofs" class="xref">Figure 1</a>, the body is:</p>
 <pre>
    rs || A || proof(B) || B || proof(C) || C || proof(D) || D
 </pre>
@@ -470,11 +475,12 @@ ul.toc li {
 <dd style="margin-left: 8">The <samp>||</samp> operator is used to represent concatenation.</dd>
 </dl>
 <p id="rfc.section.2.p.8">A message that has a content length less than or equal to the content size does not include any inline proofs.  The proof for a message with a single record is simply the hash of the body plus a trailing zero octet.</p>
+<p id="rfc.section.2.p.9">As a special case, the encoding of an empty payload is itself an empty message (i.e. it omits the initial record size), and its integrity proof is SHA-256(&#8220;\0&#8221;).</p>
 <h2 id="rfc.section.2.1">
 <a href="#rfc.section.2.1">2.1.</a> <a href="#records" id="records">Content Encoding Structure</a>
 </h2>
 <p id="rfc.section.2.1.p.1">In order to produce the final content encoding the content of the message is split into equal-sized records.  The final record can contain less than the defined record size.</p>
-<p id="rfc.section.2.1.p.2">The record size is included in the first 8 octets of the message as an unsigned 64-bit integer.  This refers to the length of each data block.</p>
+<p id="rfc.section.2.1.p.2">For non-empty payloads, the record size is included in the first 8 octets of the message as an unsigned 64-bit integer.  This refers to the length of each data block.</p>
 <p id="rfc.section.2.1.p.3">The final encoded stream comprises of the record size (&#8220;rs&#8221;), plus a sequence of records, each &#8220;rs&#8221; octets in length.  Each record, other than the last, is followed by a 32 octet proof for the record that follows.  This allows a receiver to validate and act upon each record after receiving the proof that precedes it.  The final record is not followed by a proof.</p>
 <p></p>
 
@@ -487,17 +493,24 @@ ul.toc li {
 <h2 id="rfc.section.2.2">
 <a href="#rfc.section.2.2">2.2.</a> <a href="#validating-integrity-proofs" id="validating-integrity-proofs">Validating Integrity Proofs</a>
 </h2>
-<p id="rfc.section.2.2.p.1">A receiver of a message with the &#8220;mi-sha256&#8221; content-encoding applied first attempts to acquire the integrity proof for the first record.  If the MI header field is present, a value might be included there.</p>
-<p id="rfc.section.2.2.p.2">The first 8 octets are read as an unsigned 64-bit integer, &#8220;rs&#8221;.  The remainder of the message is read into records of size &#8220;rs&#8221; (based on the value in the MI header field) plus 32 octets.  The last record is between 1 and &#8220;rs&#8221; octets in length, if not then validation fails.  For each record:</p>
+<p id="rfc.section.2.2.p.1">A receiver of a message with the &#8220;mi-sha256&#8221; content-encoding applied first attempts to acquire the integrity proof for the first record, <samp>top-proof</samp>.  If the MI header field is present, a value might be included there.</p>
+<p id="rfc.section.2.2.p.2">The receiver attempts to read the first 8 octets as an unsigned 64-bit integer, &#8220;rs&#8221;. If 8 octets aren&#8217;t available then:</p>
+<p></p>
+
+<ul>
+<li>If 0 octets are available, and <samp>top-proof</samp> is SHA-256(&#8220;\0&#8221;) (whose base64url encoding is &#8220;bjQLnP-zepicpUTmu3gKLHiQHT-zNzh2hRGjBhevoB0&#8221;), then return a 0-length decoded payload.</li>
+<li>Otherwise, validation fails.</li>
+</ul>
+<p id="rfc.section.2.2.p.4">The remainder of the message is read into records of size &#8220;rs&#8221; plus 32 octets.  The last record is between 1 and &#8220;rs&#8221; octets in length, if not then validation fails.  For each record:</p>
 <p></p>
 
 <ol>
 <li>Hash the record using SHA-256 with a single octet appended:  <br><br> a. All records other than the last have an octet with a value of 0x1 appended.  <br><br> b. The last record has an octet with a value of 0x0 appended.</li>
-<li>Compare the hash with the expected value:  <br><br> a. For the first record, the expected value might found in the MI header field and is otherwise provided through some external means.  <br><br> b. For records after the first, the expected value is the last 32 octets of the previous record.</li>
+<li>Compare the hash with the expected value:  <br><br> a. For the first record, the expected value is <samp>top-proof</samp>.  <br><br> b. For records after the first, the expected value is the last 32 octets of the previous record.</li>
 <li>If the hash is different, then this record and all subsequent records do not have integrity protection and this process ends.</li>
 <li>If a record is valid, up to &#8220;rs&#8221; octets is passed on for processing.  In other words, the trailing 32 octets is removed from every record other than the last before being used.</li>
 </ol>
-<p id="rfc.section.2.2.p.4">If an integrity check fails, the message SHOULD be discarded and the exchange treated as an error unless explicitly configured otherwise.  For clients, treat this as equivalent to a server error; servers SHOULD generate a 400 or other 4xx status code.  However, if the integrity proof for the first record is not known, this check SHOULD NOT fail unless explicitly configured to do so.</p>
+<p id="rfc.section.2.2.p.6">If an integrity check fails, the message SHOULD be discarded and the exchange treated as an error unless explicitly configured otherwise.  For clients, treat this as equivalent to a server error; servers SHOULD generate a 400 or other 4xx status code.  However, if the integrity proof for the first record is not known, this check SHOULD NOT fail unless explicitly configured to do so.</p>
 <h1 id="rfc.section.3">
 <a href="#rfc.section.3">3.</a> <a href="#header" id="header">The MI HTTP Header Field</a>
 </h1>
