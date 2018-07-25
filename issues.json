@@ -1,6 +1,102 @@
 [
 
   {
+    "url": "https://api.github.com/repos/martinthomson/http-mice/issues/12",
+    "repository_url": "https://api.github.com/repos/martinthomson/http-mice",
+    "labels_url": "https://api.github.com/repos/martinthomson/http-mice/issues/12/labels{/name}",
+    "comments_url": "https://api.github.com/repos/martinthomson/http-mice/issues/12/comments",
+    "events_url": "https://api.github.com/repos/martinthomson/http-mice/issues/12/events",
+    "html_url": "https://github.com/martinthomson/http-mice/issues/12",
+    "id": 340560204,
+    "node_id": "MDU6SXNzdWUzNDA1NjAyMDQ=",
+    "number": 12,
+    "title": "Idea: add mi-sha256 to the payload",
+    "user": {
+      "login": "ioggstream",
+      "id": 1140844,
+      "node_id": "MDQ6VXNlcjExNDA4NDQ=",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1140844?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ioggstream",
+      "html_url": "https://github.com/ioggstream",
+      "followers_url": "https://api.github.com/users/ioggstream/followers",
+      "following_url": "https://api.github.com/users/ioggstream/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ioggstream/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ioggstream/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ioggstream/subscriptions",
+      "organizations_url": "https://api.github.com/users/ioggstream/orgs",
+      "repos_url": "https://api.github.com/users/ioggstream/repos",
+      "events_url": "https://api.github.com/users/ioggstream/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ioggstream/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+
+    ],
+    "state": "closed",
+    "locked": false,
+    "assignee": null,
+    "assignees": [
+
+    ],
+    "milestone": null,
+    "comments": 1,
+    "created_at": "2018-07-12T09:32:01Z",
+    "updated_at": "2018-07-17T07:26:52Z",
+    "closed_at": "2018-07-17T07:26:52Z",
+    "author_association": "NONE",
+    "body": "The encoded payload:\r\n\r\n- contains all the information to reconstruct the original payload skipping the validation:\r\n\r\n    - `rs` record size\r\n    - the many chunks\r\n\r\n- does not contain all the information to verify the validation\r\n\r\n*IF*:\r\n\r\n  - content validation should be between the goals of MICE, \r\n\r\nwe could:\r\n\r\n  -  add the mi-sha256 at the beginning of the payload\r\n\r\nthe MI header would then be\r\n\r\n`8-bytes rs` + `32-bytes`\r\n\r\nNB: I'm not proposing of removing the `MI` header, just asking if it has sense to add the mi-sha256 to the encoded payload."
+  },
+  {
+    "url": "https://api.github.com/repos/martinthomson/http-mice/issues/11",
+    "repository_url": "https://api.github.com/repos/martinthomson/http-mice",
+    "labels_url": "https://api.github.com/repos/martinthomson/http-mice/issues/11/labels{/name}",
+    "comments_url": "https://api.github.com/repos/martinthomson/http-mice/issues/11/comments",
+    "events_url": "https://api.github.com/repos/martinthomson/http-mice/issues/11/events",
+    "html_url": "https://github.com/martinthomson/http-mice/issues/11",
+    "id": 338395820,
+    "node_id": "MDU6SXNzdWUzMzgzOTU4MjA=",
+    "number": 11,
+    "title": "Use Digest header field",
+    "user": {
+      "login": "martinthomson",
+      "id": 67641,
+      "node_id": "MDQ6VXNlcjY3NjQx",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/67641?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/martinthomson",
+      "html_url": "https://github.com/martinthomson",
+      "followers_url": "https://api.github.com/users/martinthomson/followers",
+      "following_url": "https://api.github.com/users/martinthomson/following{/other_user}",
+      "gists_url": "https://api.github.com/users/martinthomson/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/martinthomson/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/martinthomson/subscriptions",
+      "organizations_url": "https://api.github.com/users/martinthomson/orgs",
+      "repos_url": "https://api.github.com/users/martinthomson/repos",
+      "events_url": "https://api.github.com/users/martinthomson/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/martinthomson/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": null,
+    "assignees": [
+
+    ],
+    "milestone": null,
+    "comments": 7,
+    "created_at": "2018-07-05T00:43:25Z",
+    "updated_at": "2018-07-19T13:32:30Z",
+    "closed_at": null,
+    "author_association": "OWNER",
+    "body": "The encoding would be different, but I can't see a reason not to use this:\r\n```\r\nDigest: MI=base64==\r\n```\r\n\r\nThanks to @ioggstream."
+  },
+  {
     "url": "https://api.github.com/repos/martinthomson/http-mice/issues/10",
     "repository_url": "https://api.github.com/repos/martinthomson/http-mice",
     "labels_url": "https://api.github.com/repos/martinthomson/http-mice/issues/10/labels{/name}",
@@ -82,17 +178,17 @@
     "labels": [
 
     ],
-    "state": "open",
+    "state": "closed",
     "locked": false,
     "assignee": null,
     "assignees": [
 
     ],
     "milestone": null,
-    "comments": 2,
+    "comments": 3,
     "created_at": "2018-06-15T19:19:18Z",
-    "updated_at": "2018-06-25T05:07:08Z",
-    "closed_at": null,
+    "updated_at": "2018-07-25T23:05:21Z",
+    "closed_at": "2018-07-25T23:05:21Z",
     "author_association": "CONTRIBUTOR",
     "pull_request": {
       "url": "https://api.github.com/repos/martinthomson/http-mice/pulls/9",
@@ -394,7 +490,7 @@
     "labels": [
 
     ],
-    "state": "open",
+    "state": "closed",
     "locked": false,
     "assignee": null,
     "assignees": [
@@ -403,8 +499,8 @@
     "milestone": null,
     "comments": 2,
     "created_at": "2018-03-24T09:18:20Z",
-    "updated_at": "2018-03-24T23:57:26Z",
-    "closed_at": null,
+    "updated_at": "2018-07-25T23:05:22Z",
+    "closed_at": "2018-07-25T23:05:22Z",
     "author_association": "CONTRIBUTOR",
     "body": "@davidben points out that \"The last record is between 1 and \"rs\" octets in length\" doesn't provide a way to represent an empty payload.\r\n\r\nHe suggests saying that the last record is instead between 0 and rs-1 bytes long, in which case a payload that's a multiple of rs bytes long gets a hash(\"\\0\") at the very end.\r\n\r\nIt might also be reasonable to special-case empty payloads and omit the record size from them too."
   },
@@ -449,9 +545,9 @@
 
     ],
     "milestone": null,
-    "comments": 3,
+    "comments": 7,
     "created_at": "2016-05-09T03:49:35Z",
-    "updated_at": "2018-06-15T20:01:22Z",
+    "updated_at": "2018-07-17T07:14:03Z",
     "closed_at": "2018-06-15T20:01:22Z",
     "author_association": "NONE",
     "body": "Indicating the coding with the \"Content-Encoding: mi-sha256\" header, but using a separate header to hold the critical record size parameter (eg \"MI: rs=1024\") feels like a poor design.\n\nHow about just putting the record size at the start of the content, eg a 4-byte prefix holding the record size in bytes as a big-endian unsigned int?\n\nThe 2nd example from the spec would become (after converting <…> to bytes):\n\nContent-Encoding: mi-sha256\nContent-Length: 109\n\n<00 00 00 10>When I grow up, <OElbplJlPK-Rv6JNK6p5_515IaoPoZo-2elWL7OQ60A>I want to be a w<iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0>atermelon\n"
