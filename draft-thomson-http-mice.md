@@ -155,9 +155,9 @@ message (that is, `proof(A)`) is derived from the content of the first block
 ~~~
 {: #ex-proofs title="Proof structure for a message with 4 blocks"}
 
-The final encoded message is formed from the first record, followed by an
-arbitrary number of tuples of the integrity proof of the next record and then
-the record itself.  Thus, in {{ex-proofs}}, the body is:
+The final encoded message is formed from the record size and first record,
+followed by an arbitrary number of tuples of the integrity proof of the next
+record and then the record itself.  Thus, in {{ex-proofs}}, the body is:
 
 ~~~
    rs || A || proof(B) || B || proof(C) || C || proof(D) || D
@@ -170,6 +170,10 @@ A message that has a content length less than or equal to the content size does
 not include any inline proofs.  The proof for a message with a single record is
 simply the hash of the body plus a trailing zero octet.
 
+As a special case, the encoding of an empty payload is itself an empty message
+(i.e. it omits the initial record size), and its integrity proof is
+SHA-256("\0").
+
 
 ## Content Encoding Structure {#records}
 
@@ -177,8 +181,9 @@ In order to produce the final content encoding the content of the message is
 split into equal-sized records.  The final record can contain less than the
 defined record size.
 
-The record size is included in the first 8 octets of the message as an unsigned
-64-bit integer.  This refers to the length of each data block.
+For non-empty payloads, the record size is included in the first 8 octets of the
+message as an unsigned 64-bit integer.  This refers to the length of each data
+block.
 
 The final encoded stream comprises of the record size ("rs"), plus a sequence of
 records, each "rs" octets in length.  Each record, other than the last, is
@@ -204,13 +209,20 @@ message is needed.
 ## Validating Integrity Proofs
 
 A receiver of a message with the "mi-sha256" content-encoding applied first
-attempts to acquire the integrity proof for the first record.  If the MI header
-field is present, a value might be included there.
+attempts to acquire the integrity proof for the first record, `top-proof`.  If
+the MI header field is present, a value might be included there.
 
-The first 8 octets are read as an unsigned 64-bit integer, "rs".  The remainder
-of the message is read into records of size "rs" (based on the value in the MI
-header field) plus 32 octets.  The last record is between 1 and "rs" octets in
-length, if not then validation fails.  For each record:
+The receiver attempts to read the first 8 octets as an unsigned 64-bit integer,
+"rs". If 8 octets aren't available then:
+
+* If 0 octets are available, and `top-proof` is SHA-256("\0") (whose base64url
+  encoding is "bjQLnP-zepicpUTmu3gKLHiQHT-zNzh2hRGjBhevoB0"), then return a
+  0-length decoded payload.
+* Otherwise, validation fails.
+
+The remainder of the message is read into records of size "rs" plus 32 octets.
+The last record is between 1 and "rs" octets in length, if not then validation
+fails.  For each record:
 
 1. Hash the record using SHA-256 with a single octet appended:
 
@@ -221,8 +233,7 @@ length, if not then validation fails.  For each record:
 
 2. Compare the hash with the expected value:
 
-   a. For the first record, the expected value might found in the MI header
-      field and is otherwise provided through some external means.
+   a. For the first record, the expected value is `top-proof`.
 
    b. For records after the first, the expected value is the last 32 octets of
       the previous record.
