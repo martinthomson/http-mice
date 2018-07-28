@@ -177,10 +177,10 @@ SHA-256("\0").
 *RFC EDITOR: Please remove the next paragraph before publication.*
 
 Implementations of drafts of this specification MUST implement a content
-encoding named "mi-sha256-draft#" instead of the "mi-sha256" content encoding
-specified by the final RFC, with "#" replaced by the draft number being
+encoding named "mi-sha256-##" instead of the "mi-sha256" content encoding
+specified by the final RFC, with "##" replaced by the draft number being
 implemented. For example, implementations of draft-thomson-http-mice-03 would
-implement "mi-sha256-draft3".
+implement "mi-sha256-03".
 
 ## Content Encoding Structure {#records}
 
@@ -282,10 +282,8 @@ the integrity proof for the first record by other means.
 
 *RFC EDITOR: Please remove the next paragraph before publication.*
 
-Implementations of drafts of this specification MUST implement an HTTP header
-field named "MI-Draft#" instead of the "MI" header field specified by the final
-RFC, with "#" replaced by the draft number being implemented. For example,
-implementations of draft-thomson-http-mice-03 would implement "MI-Draft3".
+Implementations of drafts of this specification use the "MI" header field
+instead of renaming it to MI-## like the "mi-sha256" content encoding.
 
 
 ## MI Header Field Parameters
@@ -302,7 +300,7 @@ mi-sha256:
 *RFC EDITOR: Please remove the next paragraph before publication.*
 
 Implementations of drafts of this specification MUST use a parameter named the
-same as the "mi-sha256-draft#" content encoding they implement, with the meaning
+same as the "mi-sha256-##" content encoding they implement, with the meaning
 described for "mi-sha256" above.
 
 # Examples
