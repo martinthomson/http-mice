@@ -18,6 +18,11 @@ author:
     name: Martin Thomson
     organization: Mozilla
     email: martin.thomson@gmail.com
+ -
+    ins: J. Yasskin
+    name: Jeffrey Yasskin
+    organization: Google
+    email: jyasskin@chromium.org
 
 normative:
   RFC2119:
