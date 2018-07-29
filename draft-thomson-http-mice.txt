@@ -4,8 +4,9 @@
 
 Network Working Group                                         M. Thomson
 Internet-Draft                                                   Mozilla
-Intended status: Standards Track                           July 25, 2018
-Expires: January 26, 2019
+Intended status: Standards Track                              J. Yasskin
+Expires: January 30, 2019                                         Google
+                                                           July 29, 2018
 
 
                    Merkle Integrity Content Encoding
@@ -45,15 +46,14 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 26, 2019.
+   This Internet-Draft will expire on January 30, 2019.
 
 
 
 
 
 
-
-Thomson                 Expires January 26, 2019                [Page 1]
+Thomson & Yasskin       Expires January 30, 2019                [Page 1]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -99,7 +99,7 @@ Table of Contents
      7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  11
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  11
    Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  11
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  12
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  12
 
 1.  Introduction
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Thomson                 Expires January 26, 2019                [Page 2]
+Thomson & Yasskin       Expires January 30, 2019                [Page 2]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -165,7 +165,7 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson                 Expires January 26, 2019                [Page 3]
+Thomson & Yasskin       Expires January 30, 2019                [Page 3]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -221,7 +221,7 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson                 Expires January 26, 2019                [Page 4]
+Thomson & Yasskin       Expires January 30, 2019                [Page 4]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -277,7 +277,7 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson                 Expires January 26, 2019                [Page 5]
+Thomson & Yasskin       Expires January 30, 2019                [Page 5]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -333,7 +333,7 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson                 Expires January 26, 2019                [Page 6]
+Thomson & Yasskin       Expires January 30, 2019                [Page 6]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -389,7 +389,7 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson                 Expires January 26, 2019                [Page 7]
+Thomson & Yasskin       Expires January 30, 2019                [Page 7]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -445,7 +445,7 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson                 Expires January 26, 2019                [Page 8]
+Thomson & Yasskin       Expires January 30, 2019                [Page 8]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -501,7 +501,7 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson                 Expires January 26, 2019                [Page 9]
+Thomson & Yasskin       Expires January 30, 2019                [Page 9]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -557,7 +557,7 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson                 Expires January 26, 2019               [Page 10]
+Thomson & Yasskin       Expires January 30, 2019               [Page 10]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -613,7 +613,7 @@ Appendix B.  FAQ
 
 
 
-Thomson                 Expires January 26, 2019               [Page 11]
+Thomson & Yasskin       Expires January 30, 2019               [Page 11]
 
 Internet-Draft                    MICE                         July 2018
 
@@ -627,7 +627,7 @@ Internet-Draft                    MICE                         July 2018
        many blocks are present.  The chained hash is also smaller by 32
        octets.
 
-Author's Address
+Authors' Addresses
 
    Martin Thomson
    Mozilla
@@ -635,6 +635,10 @@ Author's Address
    Email: martin.thomson@gmail.com
 
 
+   Jeffrey Yasskin
+   Google
+
+   Email: jyasskin@chromium.org
 
 
 
@@ -665,8 +669,4 @@ Author's Address
 
 
 
-
-
-
-
-Thomson                 Expires January 26, 2019               [Page 12]
+Thomson & Yasskin       Expires January 30, 2019               [Page 12]

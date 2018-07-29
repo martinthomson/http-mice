@@ -310,9 +310,9 @@ ul.toc li {
   <meta name="generator" content="xml2rfc version 2.9.9 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
-  <meta name="dct.creator" content="Thomson, M." />
+  <meta name="dct.creator" content="Thomson, M. and J. Yasskin" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-thomson-http-mice-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2018-07-25" />
+  <meta name="dct.issued" scheme="ISO8601" content="2018-07-29" />
   <meta name="dct.abstract" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection." />
   <meta name="description" content="This memo introduces a content-coding for HTTP that provides progressive integrity for message contents.  This integrity protection can be evaluated on a partial representation, allowing a recipient to process a message as it is delivered while retaining strong integrity protection." />
 
@@ -333,11 +333,15 @@ ul.toc li {
 </tr>
 <tr>
 <td class="left">Intended status: Standards Track</td>
-<td class="right">July 25, 2018</td>
+<td class="right">J. Yasskin</td>
 </tr>
 <tr>
-<td class="left">Expires: January 26, 2019</td>
-<td class="right"></td>
+<td class="left">Expires: January 30, 2019</td>
+<td class="right">Google</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">July 29, 2018</td>
 </tr>
 
     	
@@ -357,7 +361,7 @@ ul.toc li {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on January 26, 2019.</p>
+<p>This Internet-Draft will expire on January 30, 2019.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2018 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -413,7 +417,7 @@ ul.toc li {
 </li>
 <li>Appendix B.   <a href="#rfc.appendix.B">FAQ</a>
 </li>
-<li><a href="#rfc.authors">Author's Address</a>
+<li><a href="#rfc.authors">Authors' Addresses</a>
 </li>
 
 
@@ -713,7 +717,7 @@ atermelon
 <li>Why do messages have to be processed in reverse to construct them?  <br><br> The final integrity value, no matter how it is derived, has to depend on every bit of the message.  That means that there are three choices: both sender and receiver have to process the whole message, the sender has to work backwards, or the receiver has to work backwards.  The current form is the best option of the three.  The expectation is that this will be useful for content that is generated once and sent multiple times, since the onerous backwards processing requirement can be amortized.</li>
 <li>Why not just generate a table of hashes?  <br><br> An alternative design includes a header that comprises hashes of every block of the message.  The final proof is a hash of that table.  This has the advantage that the table can be built in any order.  The disadvantage is that a receiver needs to store the table while processing content, whereas a chained hash can be processed with a single stored hash worth of state no matter how many blocks are present.  The chained hash is also smaller by 32 octets.</li>
 </ol>
-<h1 id="rfc.authors"><a href="#rfc.authors">Author's Address</a></h1>
+<h1 id="rfc.authors"><a href="#rfc.authors">Authors' Addresses</a></h1>
 <div class="avoidbreak">
   <address class="vcard">
 	<span class="vcardline">
@@ -733,6 +737,27 @@ atermelon
 	  <span class="country-name vcardline"></span>
 	</span>
 	<span class="vcardline">EMail: <a href="mailto:martin.thomson@gmail.com">martin.thomson@gmail.com</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Jeffrey Yasskin</span> 
+	  <span class="n hidden">
+		<span class="family-name">Yasskin</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Google</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:jyasskin@chromium.org">jyasskin@chromium.org</a></span>
 
   </address>
 </div>
