@@ -78,24 +78,24 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . . . .   3
-     2.1.  Content Encoding Structure  . . . . . . . . . . . . . . .   4
+     2.1.  Content Encoding Structure  . . . . . . . . . . . . . . .   5
      2.2.  Validating Integrity Proofs . . . . . . . . . . . . . . .   5
    3.  The MI HTTP Header Field  . . . . . . . . . . . . . . . . . .   6
-     3.1.  MI Header Field Parameters  . . . . . . . . . . . . . . .   6
+     3.1.  MI Header Field Parameters  . . . . . . . . . . . . . . .   7
    4.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
      4.1.  Simple Example  . . . . . . . . . . . . . . . . . . . . .   7
      4.2.  Example with Multiple Records . . . . . . . . . . . . . .   7
    5.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
      5.1.  Message Truncation  . . . . . . . . . . . . . . . . . . .   8
-     5.2.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   8
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
-     6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   8
+     5.2.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   9
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
+     6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   9
      6.2.  MI Header Field . . . . . . . . . . . . . . . . . . . . .   9
      6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   9
-       6.3.1.  mi-sha256 parameter . . . . . . . . . . . . . . . . .   9
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+       6.3.1.  mi-sha256 parameter . . . . . . . . . . . . . . . . .  10
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  10
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  11
      7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  11
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  11
    Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  11
@@ -210,13 +210,13 @@ Internet-Draft                    MICE                         July 2018
    empty message (i.e. it omits the initial record size), and its
    integrity proof is SHA-256("\0").
 
-2.1.  Content Encoding Structure
+   _RFC EDITOR: Please remove the next paragraph before publication._
 
-   In order to produce the final content encoding the content of the
-   message is split into equal-sized records.  The final record can
-   contain less than the defined record size.
-
-
+   Implementations of drafts of this specification MUST implement a
+   content encoding named "mi-sha256-##" instead of the "mi-sha256"
+   content encoding specified by the final RFC, with "##" replaced by
+   the draft number being implemented.  For example, implementations of
+   draft-thomson-http-mice-03 would implement "mi-sha256-03".
 
 
 
@@ -225,6 +225,12 @@ Thomson & Yasskin       Expires January 30, 2019                [Page 4]
 
 Internet-Draft                    MICE                         July 2018
 
+
+2.1.  Content Encoding Structure
+
+   In order to produce the final content encoding the content of the
+   message is split into equal-sized records.  The final record can
+   contain less than the defined record size.
 
    For non-empty payloads, the record size is included in the first 8
    octets of the message as an unsigned 64-bit integer.  This refers to
@@ -266,6 +272,16 @@ Internet-Draft                    MICE                         July 2018
 
    o  Otherwise, validation fails.
 
+
+
+
+
+
+Thomson & Yasskin       Expires January 30, 2019                [Page 5]
+
+Internet-Draft                    MICE                         July 2018
+
+
    The remainder of the message is read into records of size "rs" plus
    32 octets.  The last record is between 1 and "rs" octets in length,
    if not then validation fails.  For each record:
@@ -274,13 +290,6 @@ Internet-Draft                    MICE                         July 2018
 
        a.  All records other than the last have an octet with a value of
        0x1 appended.
-
-
-
-Thomson & Yasskin       Expires January 30, 2019                [Page 5]
-
-Internet-Draft                    MICE                         July 2018
-
 
        b.  The last record has an octet with a value of 0x0 appended.
 
@@ -322,15 +331,6 @@ Internet-Draft                    MICE                         July 2018
    field), each application of the content encoding is reflected in the
    MI header field in the order in which they were applied.
 
-   The MI header MAY be omitted if the sender intends for the receiver
-   to acquire the integrity proof for the first record by other means.
-
-3.1.  MI Header Field Parameters
-
-   The following parameters are used in validating content encoded with
-   the "mi-sha256" content encoding:
-
-
 
 
 Thomson & Yasskin       Expires January 30, 2019                [Page 6]
@@ -338,10 +338,30 @@ Thomson & Yasskin       Expires January 30, 2019                [Page 6]
 Internet-Draft                    MICE                         July 2018
 
 
+   The MI header MAY be omitted if the sender intends for the receiver
+   to acquire the integrity proof for the first record by other means.
+
+   _RFC EDITOR: Please remove the next paragraph before publication._
+
+   Implementations of drafts of this specification use the "MI" header
+   field instead of renaming it to MI-## like the "mi-sha256" content
+   encoding.
+
+3.1.  MI Header Field Parameters
+
+   The following parameters are used in validating content encoded with
+   the "mi-sha256" content encoding:
+
    mi-sha256:  The "mi-sha256" parameter carries an integrity proof for
       the first record of the message.  This provides integrity for the
       entire message body.  This value is encoded using base64url
       encoding [RFC7515].
+
+   _RFC EDITOR: Please remove the next paragraph before publication._
+
+   Implementations of drafts of this specification MUST use a parameter
+   named the same as the "mi-sha256-##" content encoding they implement,
+   with the meaning described for "mi-sha256" above.
 
 4.  Examples
 
@@ -365,6 +385,15 @@ Internet-Draft                    MICE                         July 2018
    record size (16 octets).  This results in two integrity proofs being
    included in the representation.
 
+
+
+
+
+Thomson & Yasskin       Expires January 30, 2019                [Page 7]
+
+Internet-Draft                    MICE                         July 2018
+
+
    PUT /test HTTP/1.1
    Host: example.com
    MI: mi-sha256=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4
@@ -381,18 +410,6 @@ Internet-Draft                    MICE                         July 2018
    these are shown here using the base64url encoding [RFC7515] with new
    lines between the original text and integrity proofs.  Note that
    there is a single trailing space (0x20) on the first line.
-
-
-
-
-
-
-
-
-Thomson & Yasskin       Expires January 30, 2019                [Page 7]
-
-Internet-Draft                    MICE                         July 2018
-
 
 5.  Security Considerations
 
@@ -421,6 +438,18 @@ Internet-Draft                    MICE                         July 2018
    Whether it is safe to act on partial messages will depend on the
    nature of the message and the processing that is performed.
 
+
+
+
+
+
+
+
+Thomson & Yasskin       Expires January 30, 2019                [Page 8]
+
+Internet-Draft                    MICE                         July 2018
+
+
 5.2.  Algorithm Agility
 
    A new content encoding type is needed in order to define the use of a
@@ -439,16 +468,6 @@ Internet-Draft                    MICE                         July 2018
       provides progressive integrity.
 
    o  Reference: this specification
-
-
-
-
-
-
-Thomson & Yasskin       Expires January 30, 2019                [Page 8]
-
-Internet-Draft                    MICE                         July 2018
-
 
 6.2.  MI Header Field
 
@@ -480,6 +499,13 @@ Internet-Draft                    MICE                         July 2018
 
    o  Purpose: A brief description of the purpose of the parameter.
 
+
+
+Thomson & Yasskin       Expires January 30, 2019                [Page 9]
+
+Internet-Draft                    MICE                         July 2018
+
+
    o  Reference: A reference to a specification that defines the
       semantics of the parameter.
 
@@ -494,17 +520,6 @@ Internet-Draft                    MICE                         July 2018
    o  Reference: this document
 
 7.  References
-
-
-
-
-
-
-
-Thomson & Yasskin       Expires January 30, 2019                [Page 9]
-
-Internet-Draft                    MICE                         July 2018
-
 
 7.1.  Normative References
 
@@ -538,6 +553,15 @@ Internet-Draft                    MICE                         July 2018
               DOI 10.17487/RFC7231, June 2014,
               <https://www.rfc-editor.org/info/rfc7231>.
 
+
+
+
+
+Thomson & Yasskin       Expires January 30, 2019               [Page 10]
+
+Internet-Draft                    MICE                         July 2018
+
+
    [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web
               Signature (JWS)", RFC 7515, DOI 10.17487/RFC7515, May
               2015, <https://www.rfc-editor.org/info/rfc7515>.
@@ -552,15 +576,6 @@ Internet-Draft                    MICE                         July 2018
               (TLS) Protocol Version 1.2", RFC 5246,
               DOI 10.17487/RFC5246, August 2008,
               <https://www.rfc-editor.org/info/rfc5246>.
-
-
-
-
-
-Thomson & Yasskin       Expires January 30, 2019               [Page 10]
-
-Internet-Draft                    MICE                         July 2018
-
 
    [RFC6962]  Laurie, B., Langley, A., and E. Kasper, "Certificate
               Transparency", RFC 6962, DOI 10.17487/RFC6962, June 2013,
@@ -596,6 +611,13 @@ Appendix B.  FAQ
        Transferring the proof separately is sometimes necessary.
        Separating the value out allows for that to happen more easily.
 
+
+
+Thomson & Yasskin       Expires January 30, 2019               [Page 11]
+
+Internet-Draft                    MICE                         July 2018
+
+
    2.  Why do messages have to be processed in reverse to construct
        them?
 
@@ -609,14 +631,6 @@ Appendix B.  FAQ
        backwards processing requirement can be amortized.
 
    3.  Why not just generate a table of hashes?
-
-
-
-
-Thomson & Yasskin       Expires January 30, 2019               [Page 11]
-
-Internet-Draft                    MICE                         July 2018
-
 
        An alternative design includes a header that comprises hashes of
        every block of the message.  The final proof is a hash of that
@@ -639,20 +653,6 @@ Authors' Addresses
    Google
 
    Email: jyasskin@chromium.org
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
