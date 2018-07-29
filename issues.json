@@ -1,6 +1,60 @@
 [
 
   {
+    "url": "https://api.github.com/repos/martinthomson/http-mice/issues/13",
+    "repository_url": "https://api.github.com/repos/martinthomson/http-mice",
+    "labels_url": "https://api.github.com/repos/martinthomson/http-mice/issues/13/labels{/name}",
+    "comments_url": "https://api.github.com/repos/martinthomson/http-mice/issues/13/comments",
+    "events_url": "https://api.github.com/repos/martinthomson/http-mice/issues/13/events",
+    "html_url": "https://github.com/martinthomson/http-mice/pull/13",
+    "id": 345418328,
+    "node_id": "MDExOlB1bGxSZXF1ZXN0MjA0NTc2MzA3",
+    "number": 13,
+    "title": "Add myself as an author.",
+    "user": {
+      "login": "jyasskin",
+      "id": 83420,
+      "node_id": "MDQ6VXNlcjgzNDIw",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/83420?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jyasskin",
+      "html_url": "https://github.com/jyasskin",
+      "followers_url": "https://api.github.com/users/jyasskin/followers",
+      "following_url": "https://api.github.com/users/jyasskin/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jyasskin/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jyasskin/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jyasskin/subscriptions",
+      "organizations_url": "https://api.github.com/users/jyasskin/orgs",
+      "repos_url": "https://api.github.com/users/jyasskin/repos",
+      "events_url": "https://api.github.com/users/jyasskin/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jyasskin/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+
+    ],
+    "state": "closed",
+    "locked": false,
+    "assignee": null,
+    "assignees": [
+
+    ],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2018-07-28T04:44:38Z",
+    "updated_at": "2018-07-29T23:49:57Z",
+    "closed_at": "2018-07-29T23:49:57Z",
+    "author_association": "CONTRIBUTOR",
+    "pull_request": {
+      "url": "https://api.github.com/repos/martinthomson/http-mice/pulls/13",
+      "html_url": "https://github.com/martinthomson/http-mice/pull/13",
+      "diff_url": "https://github.com/martinthomson/http-mice/pull/13.diff",
+      "patch_url": "https://github.com/martinthomson/http-mice/pull/13.patch"
+    },
+    "body": ""
+  },
+  {
     "url": "https://api.github.com/repos/martinthomson/http-mice/issues/12",
     "repository_url": "https://api.github.com/repos/martinthomson/http-mice",
     "labels_url": "https://api.github.com/repos/martinthomson/http-mice/issues/12/labels{/name}",
@@ -89,9 +143,9 @@
 
     ],
     "milestone": null,
-    "comments": 7,
+    "comments": 9,
     "created_at": "2018-07-05T00:43:25Z",
-    "updated_at": "2018-07-19T13:32:30Z",
+    "updated_at": "2018-07-28T11:50:03Z",
     "closed_at": null,
     "author_association": "OWNER",
     "body": "The encoding would be different, but I can't see a reason not to use this:\r\n```\r\nDigest: MI=base64==\r\n```\r\n\r\nThanks to @ioggstream."
@@ -137,9 +191,9 @@
 
     ],
     "milestone": null,
-    "comments": 0,
+    "comments": 1,
     "created_at": "2018-06-15T19:30:02Z",
-    "updated_at": "2018-06-15T19:30:02Z",
+    "updated_at": "2018-07-25T23:12:30Z",
     "closed_at": null,
     "author_association": "CONTRIBUTOR",
     "body": "https://tools.ietf.org/html/draft-thomson-http-mice-02#section-2.2 says\r\n\r\n> If an integrity check fails, the message SHOULD be discarded and the\r\n   exchange treated as an error unless explicitly configured otherwise.\r\n   For clients, treat this as equivalent to a server error; servers\r\n   SHOULD generate a 400 or other 4xx status code.  However, if the\r\n   integrity proof for the first record is not known, this check SHOULD\r\n   NOT fail unless explicitly configured to do so.\r\n\r\nIf implementations follow the SHOULDs, an attacker can drop the initial integrity proof and change the initial record (and its size!) with impunity, but then hit a hard error if they change any subsequent record. I think https://tools.ietf.org/html/draft-thomson-postel-was-wrong-03 argues that receivers should treat a missing initial proof as a hard error too.\r\n\r\nSorry if I'm missing a previous discussion that gave a solid use case for this leniency."
@@ -241,7 +295,7 @@
     "milestone": null,
     "comments": 0,
     "created_at": "2018-06-15T18:16:57Z",
-    "updated_at": "2018-06-15T18:29:34Z",
+    "updated_at": "2018-07-28T04:41:21Z",
     "closed_at": null,
     "author_association": "CONTRIBUTOR",
     "pull_request": {
