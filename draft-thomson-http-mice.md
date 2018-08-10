@@ -26,10 +26,11 @@ author:
 
 normative:
   RFC2119:
+  RFC3230:
+  RFC4648:
   RFC5226:
   RFC7230:
   RFC7231:
-  RFC7515:
   FIPS180-4:
     title: NIST FIPS 180-4, Secure Hash Standard
     author:
@@ -96,8 +97,8 @@ is a progressive, hash-based integrity check based on Merkle Hash Trees
 [MERKLE].
 
 The means of conveying the root integrity proof used by this content encoding
-will depend on deployment requirements.  This document defines an MI header
-field (see {{header}}) that can carry an integrity proof.
+will depend on deployment requirements.  This document defines a digest
+algorithm (see {{digest-mi-sha256}}) that can carry an integrity proof.
 
 
 ## Notational Conventions
@@ -218,17 +219,18 @@ a given record, a contiguous sequence of records back to the start of the
 message is needed.
 
 
-## Validating Integrity Proofs
+## Validating Integrity Proofs {#validating}
 
 A receiver of a message with the "mi-sha256" content-encoding applied first
 attempts to acquire the integrity proof for the first record, `top-proof`.  If
-the MI header field is present, a value might be included there.
+the Digest header field is present with the mi-sha256 parameter, a value might
+be included there.
 
 The receiver attempts to read the first 8 octets as an unsigned 64-bit integer,
 "rs". If 8 octets aren't available then:
 
-* If 0 octets are available, and `top-proof` is SHA-256("\0") (whose base64url
-  encoding is "bjQLnP-zepicpUTmu3gKLHiQHT-zNzh2hRGjBhevoB0"), then return a
+* If 0 octets are available, and `top-proof` is SHA-256("\0") (whose base64
+  encoding is "bjQLnP+zepicpUTmu3gKLHiQHT+zNzh2hRGjBhevoB0="), then return a
   0-length decoded payload.
 * Otherwise, validation fails.
 
@@ -264,62 +266,50 @@ status code.  However, if the integrity proof for the first record is not known,
 this check SHOULD NOT fail unless explicitly configured to do so.
 
 
-# The MI HTTP Header Field {#header}
+# The mi-sha256 digest algorithm {#digest-mi-sha256}
 
-The MI HTTP header field carries message integrity proofs corresponding to
-content encoding(s) that have been applied to a payload body.
+[RFC3230] describes digests applying to "the entire instance associated with the
+message". The instance corresponds to the "representation" in Section 3 of
+[RFC7231], but unlike the existing digest algorithms, the mi-sha256 digest
+algorithm specifies the top-level digest at the point when the mi-sha256 content
+coding ({{encoding}}) is applied or removed from the representation.
 
-The MI header field uses the extended ABNF syntax defined in Section 1.2 of
-[RFC7230] and the `parameter` rule from [RFC7231]:
+When the "mi-sha256" digest algorithm is specified for a representation, the
+recipient MUST:
 
-~~~
-  MI = #mi_params
-  mi_params = [ parameter *( ";" parameter ) ]
-~~~
+1. If the "mi-sha256" content coding has not been applied to the representation
+   exactly once (Section 3.1.2.2 of [RFC7231]), reject the representation.
+1. Let `new-top-proof` be the base64-decoding (Section 4 of [RFC4648]) of the
+   "mi-sha256" digest. The recipient MUST behave as described by Section 4.2.9
+   of {{!I-D.ietf-httpbis-header-structure}} if it encounters improper padding,
+   non-zero padding bits, or non-alphabet characters, where rejecting the data
+   means to reject the representation.
+1. If the `top-proof` for the "mi-sha256" content encoding ({{validating}}) has
+   been set before and is not equal to `new-top-proof`, reject the
+   representation.
+1. Set `top-proof` to `new-top-proof`.
 
-If the payload is encoded more than once (as reflected by having multiple
-content-codings that use the message integrity header field), each application
-of the content encoding is reflected in the MI header field in the order in
-which they were applied.
-
-The MI header MAY be omitted if the sender intends for the receiver to acquire
-the integrity proof for the first record by other means.
-
-*RFC EDITOR: Please remove the next paragraph before publication.*
-
-Implementations of drafts of this specification use the "MI" header field
-instead of renaming it to MI-## like the "mi-sha256" content encoding.
-
-
-## MI Header Field Parameters
-
-The following parameters are used in validating content encoded with the
-"mi-sha256" content encoding:
-
-mi-sha256:
-
-: The "mi-sha256" parameter carries an integrity proof for the first record of the
-  message.  This provides integrity for the entire message body.  This value is
-  encoded using base64url encoding [RFC7515].
+When rejecting the representation, clients SHOULD treat this as equivalent to a
+server error, and servers SHOULD generate a 400 or other 4xx status code.
 
 *RFC EDITOR: Please remove the next paragraph before publication.*
 
-Implementations of drafts of this specification MUST use a parameter named the
-same as the "mi-sha256-##" content encoding they implement, with the meaning
-described for "mi-sha256" above.
+Implementations of drafts of this specification MUST use a digest algorithm
+named the same as the "mi-sha256-##" content encoding they implement, with the
+meaning described for "mi-sha256" above.
 
 # Examples
 
 ## Simple Example
 
 The following example contains a short message.  This contains just a single
-record, so there are no inline integrity proofs, just a single value in a MI
-header field.  The record size is prepended to the message body (shown here in
-angle brackets).
+record, so there are no inline integrity proofs, just a single value in the
+mi-sha256 parameter of a Digest header field.  The record size is prepended to
+the message body (shown here in angle brackets).
 
 ~~~
 HTTP/1.1 200 OK
-MI: mi-sha256=dcRDgR2GM35DluAV13PzgnG6-pvQwPywfFvAu1UeFrs
+Digest: mi-sha256=dcRDgR2GM35DluAV13PzgnG6+pvQwPywfFvAu1UeFrs=
 Content-Encoding: mi-sha256
 Content-Length: 49
 
@@ -336,19 +326,19 @@ representation.
 ~~~
 PUT /test HTTP/1.1
 Host: example.com
-MI: mi-sha256=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4
+Digest: mi-sha256=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4=
 Content-Encoding: mi-sha256
 Content-Length: 113
 
 <0x0000000000000010>When I grow up,
-OElbplJlPK-Rv6JNK6p5_515IaoPoZo-2elWL7OQ60A
+OElbplJlPK+Rv6JNK6p5/515IaoPoZo+2elWL7OQ60A=
 I want to be a w
-iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0
+iPMpmgExHPrbEX3/RvwP4d16fWlK4l++p75PUu_KyN0=
 atermelon
 ~~~
 
 Since the inline integrity proofs contain non-printing characters, these are
-shown here using the base64url encoding [RFC7515] with new lines between the
+shown here using the base64 encoding [RFC4648] with new lines between the
 original text and integrity proofs.  Note that there is a single trailing space
 (0x20) on the first line.
 
@@ -400,38 +390,15 @@ Registry, as detailed in {{encoding}}.
 * Reference: this specification
 
 
-## MI Header Field {#iana-header}
+## The "mi-sha256" digest algorithm {#iana-digest}
 
-This memo registers the "MI" HTTP header field in the Permanent Message
-Header Registry, as detailed in {{header}}.
+This memo registers the "mi-sha256" digest algorithm in the [HTTP Digest
+Algorithm
+Values](https://www.iana.org/assignments/http-dig-alg/http-dig-alg.xhtml)
+registry:
 
-* Field name: MI
-* Protocol: HTTP
-* Status: Standard
-* Reference: this specification
-* Notes:
-
-
-## The HTTP MI Parameter Registry {#mi-registry}
-
-This memo establishes a registry for parameters used by the "MI" header field
-under the "Hypertext Transfer Protocol (HTTP) Parameters" grouping.  The
-"Hypertext Transfer Protocol (HTTP) MI Parameters" registry operates under an
-"Specification Required" policy [RFC5226].
-
-Entries in this registry are expected to include the following information:
-
-* Parameter Name: The name of the parameter.
-* Purpose: A brief description of the purpose of the parameter.
-* Reference: A reference to a specification that defines the semantics of the parameter.
-
-The initial contents of this registry are:
-
-### mi-sha256 parameter
-
-* Parameter Name: mi-sha256
-* Purpose: The value of the integrity proof for the first record.
-* Reference: this document
+* Digest Algorithm: mi-sha256
+* Description: As specified in {{digest-mi-sha256}}.
 
 
 --- back
