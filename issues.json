@@ -1,6 +1,60 @@
 [
 
   {
+    "url": "https://api.github.com/repos/martinthomson/http-mice/issues/14",
+    "repository_url": "https://api.github.com/repos/martinthomson/http-mice",
+    "labels_url": "https://api.github.com/repos/martinthomson/http-mice/issues/14/labels{/name}",
+    "comments_url": "https://api.github.com/repos/martinthomson/http-mice/issues/14/comments",
+    "events_url": "https://api.github.com/repos/martinthomson/http-mice/issues/14/events",
+    "html_url": "https://github.com/martinthomson/http-mice/pull/14",
+    "id": 349683332,
+    "node_id": "MDExOlB1bGxSZXF1ZXN0MjA3NzQyMzE4",
+    "number": 14,
+    "title": "Fix #11: Use the Digest header instead of a new MI header.",
+    "user": {
+      "login": "jyasskin",
+      "id": 83420,
+      "node_id": "MDQ6VXNlcjgzNDIw",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/83420?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jyasskin",
+      "html_url": "https://github.com/jyasskin",
+      "followers_url": "https://api.github.com/users/jyasskin/followers",
+      "following_url": "https://api.github.com/users/jyasskin/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jyasskin/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jyasskin/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jyasskin/subscriptions",
+      "organizations_url": "https://api.github.com/users/jyasskin/orgs",
+      "repos_url": "https://api.github.com/users/jyasskin/repos",
+      "events_url": "https://api.github.com/users/jyasskin/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jyasskin/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [
+
+    ],
+    "state": "open",
+    "locked": false,
+    "assignee": null,
+    "assignees": [
+
+    ],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2018-08-10T23:22:48Z",
+    "updated_at": "2018-08-12T23:01:01Z",
+    "closed_at": null,
+    "author_association": "COLLABORATOR",
+    "pull_request": {
+      "url": "https://api.github.com/repos/martinthomson/http-mice/pulls/14",
+      "html_url": "https://github.com/martinthomson/http-mice/pull/14",
+      "diff_url": "https://github.com/martinthomson/http-mice/pull/14.diff",
+      "patch_url": "https://github.com/martinthomson/http-mice/pull/14.patch"
+    },
+    "body": "FYI @mnot."
+  },
+  {
     "url": "https://api.github.com/repos/martinthomson/http-mice/issues/13",
     "repository_url": "https://api.github.com/repos/martinthomson/http-mice",
     "labels_url": "https://api.github.com/repos/martinthomson/http-mice/issues/13/labels{/name}",
@@ -43,9 +97,9 @@
     "milestone": null,
     "comments": 0,
     "created_at": "2018-07-28T04:44:38Z",
-    "updated_at": "2018-07-29T23:49:57Z",
+    "updated_at": "2018-07-30T16:27:45Z",
     "closed_at": "2018-07-29T23:49:57Z",
-    "author_association": "CONTRIBUTOR",
+    "author_association": "COLLABORATOR",
     "pull_request": {
       "url": "https://api.github.com/repos/martinthomson/http-mice/pulls/13",
       "html_url": "https://github.com/martinthomson/http-mice/pull/13",
@@ -143,9 +197,9 @@
 
     ],
     "milestone": null,
-    "comments": 9,
+    "comments": 14,
     "created_at": "2018-07-05T00:43:25Z",
-    "updated_at": "2018-07-28T11:50:03Z",
+    "updated_at": "2018-08-11T13:45:18Z",
     "closed_at": null,
     "author_association": "OWNER",
     "body": "The encoding would be different, but I can't see a reason not to use this:\r\n```\r\nDigest: MI=base64==\r\n```\r\n\r\nThanks to @ioggstream."
@@ -195,7 +249,7 @@
     "created_at": "2018-06-15T19:30:02Z",
     "updated_at": "2018-07-25T23:12:30Z",
     "closed_at": null,
-    "author_association": "CONTRIBUTOR",
+    "author_association": "COLLABORATOR",
     "body": "https://tools.ietf.org/html/draft-thomson-http-mice-02#section-2.2 says\r\n\r\n> If an integrity check fails, the message SHOULD be discarded and the\r\n   exchange treated as an error unless explicitly configured otherwise.\r\n   For clients, treat this as equivalent to a server error; servers\r\n   SHOULD generate a 400 or other 4xx status code.  However, if the\r\n   integrity proof for the first record is not known, this check SHOULD\r\n   NOT fail unless explicitly configured to do so.\r\n\r\nIf implementations follow the SHOULDs, an attacker can drop the initial integrity proof and change the initial record (and its size!) with impunity, but then hit a hard error if they change any subsequent record. I think https://tools.ietf.org/html/draft-thomson-postel-was-wrong-03 argues that receivers should treat a missing initial proof as a hard error too.\r\n\r\nSorry if I'm missing a previous discussion that gave a solid use case for this leniency."
   },
   {
@@ -241,9 +295,9 @@
     "milestone": null,
     "comments": 3,
     "created_at": "2018-06-15T19:19:18Z",
-    "updated_at": "2018-07-25T23:05:21Z",
+    "updated_at": "2018-07-30T16:27:54Z",
     "closed_at": "2018-07-25T23:05:21Z",
-    "author_association": "CONTRIBUTOR",
+    "author_association": "COLLABORATOR",
     "pull_request": {
       "url": "https://api.github.com/repos/martinthomson/http-mice/pulls/9",
       "html_url": "https://github.com/martinthomson/http-mice/pull/9",
@@ -286,7 +340,7 @@
     "labels": [
 
     ],
-    "state": "open",
+    "state": "closed",
     "locked": false,
     "assignee": null,
     "assignees": [
@@ -295,9 +349,9 @@
     "milestone": null,
     "comments": 0,
     "created_at": "2018-06-15T18:16:57Z",
-    "updated_at": "2018-07-28T04:41:21Z",
-    "closed_at": null,
-    "author_association": "CONTRIBUTOR",
+    "updated_at": "2018-07-30T16:27:35Z",
+    "closed_at": "2018-07-29T23:50:27Z",
+    "author_association": "COLLABORATOR",
     "pull_request": {
       "url": "https://api.github.com/repos/martinthomson/http-mice/pulls/8",
       "html_url": "https://github.com/martinthomson/http-mice/pull/8",
@@ -349,9 +403,9 @@
     "milestone": null,
     "comments": 0,
     "created_at": "2018-06-15T17:50:00Z",
-    "updated_at": "2018-06-15T19:59:39Z",
+    "updated_at": "2018-07-30T16:28:04Z",
     "closed_at": "2018-06-15T19:59:39Z",
-    "author_association": "CONTRIBUTOR",
+    "author_association": "COLLABORATOR",
     "pull_request": {
       "url": "https://api.github.com/repos/martinthomson/http-mice/pulls/7",
       "html_url": "https://github.com/martinthomson/http-mice/pull/7",
@@ -403,9 +457,9 @@
     "milestone": null,
     "comments": 0,
     "created_at": "2018-06-15T17:49:40Z",
-    "updated_at": "2018-06-15T19:57:40Z",
+    "updated_at": "2018-07-30T16:28:12Z",
     "closed_at": "2018-06-15T19:57:40Z",
-    "author_association": "CONTRIBUTOR",
+    "author_association": "COLLABORATOR",
     "pull_request": {
       "url": "https://api.github.com/repos/martinthomson/http-mice/pulls/6",
       "html_url": "https://github.com/martinthomson/http-mice/pull/6",
@@ -448,7 +502,7 @@
     "labels": [
 
     ],
-    "state": "open",
+    "state": "closed",
     "locked": false,
     "assignee": null,
     "assignees": [
@@ -457,9 +511,9 @@
     "milestone": null,
     "comments": 0,
     "created_at": "2018-05-29T18:41:01Z",
-    "updated_at": "2018-05-29T18:41:01Z",
-    "closed_at": null,
-    "author_association": "CONTRIBUTOR",
+    "updated_at": "2018-07-29T23:50:28Z",
+    "closed_at": "2018-07-29T23:50:28Z",
+    "author_association": "COLLABORATOR",
     "body": "For example, an implementation of [draft 02](https://tools.ietf.org/html/draft-thomson-http-mice-02) might use the `MI-Draft2` header and the `mi-sha256-draft2` content encoding."
   },
   {
@@ -507,7 +561,7 @@
     "created_at": "2018-05-29T18:38:43Z",
     "updated_at": "2018-05-29T18:38:43Z",
     "closed_at": null,
-    "author_association": "CONTRIBUTOR",
+    "author_association": "COLLABORATOR",
     "body": "For example, a server might gzip its payload before mi-sha256-encoding it, leading to a Content-Encoding of `gzip,mi-sha256`."
   },
   {
@@ -555,7 +609,7 @@
     "created_at": "2018-03-24T09:18:20Z",
     "updated_at": "2018-07-25T23:05:22Z",
     "closed_at": "2018-07-25T23:05:22Z",
-    "author_association": "CONTRIBUTOR",
+    "author_association": "COLLABORATOR",
     "body": "@davidben points out that \"The last record is between 1 and \"rs\" octets in length\" doesn't provide a way to represent an empty payload.\r\n\r\nHe suggests saying that the last record is instead between 0 and rs-1 bytes long, in which case a payload that's a multiple of rs bytes long gets a hash(\"\\0\") at the very end.\r\n\r\nIt might also be reasonable to special-case empty payloads and omit the record size from them too."
   },
   {
