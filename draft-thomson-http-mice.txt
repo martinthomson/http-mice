@@ -5,8 +5,8 @@
 Network Working Group                                         M. Thomson
 Internet-Draft                                                   Mozilla
 Intended status: Standards Track                              J. Yasskin
-Expires: January 30, 2019                                         Google
-                                                           July 29, 2018
+Expires: February 13, 2019                                        Google
+                                                         August 12, 2018
 
 
                    Merkle Integrity Content Encoding
@@ -46,16 +46,16 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 30, 2019.
+   This Internet-Draft will expire on February 13, 2019.
 
 
 
 
 
 
-Thomson & Yasskin       Expires January 30, 2019                [Page 1]
+Thomson & Yasskin       Expires February 13, 2019               [Page 1]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
 Copyright Notice
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Thomson & Yasskin       Expires January 30, 2019                [Page 2]
+Thomson & Yasskin       Expires February 13, 2019               [Page 2]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
    However, additional integrity protection might be desirable for some
@@ -165,9 +165,9 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson & Yasskin       Expires January 30, 2019                [Page 3]
+Thomson & Yasskin       Expires February 13, 2019               [Page 3]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
    the content of the first block (A), plus the value of the proof for
@@ -221,9 +221,9 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson & Yasskin       Expires January 30, 2019                [Page 4]
+Thomson & Yasskin       Expires February 13, 2019               [Page 4]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
 2.1.  Content Encoding Structure
@@ -277,9 +277,9 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson & Yasskin       Expires January 30, 2019                [Page 5]
+Thomson & Yasskin       Expires February 13, 2019               [Page 5]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
    The remainder of the message is read into records of size "rs" plus
@@ -333,9 +333,9 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson & Yasskin       Expires January 30, 2019                [Page 6]
+Thomson & Yasskin       Expires February 13, 2019               [Page 6]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
    The MI header MAY be omitted if the sender intends for the receiver
@@ -389,9 +389,9 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson & Yasskin       Expires January 30, 2019                [Page 7]
+Thomson & Yasskin       Expires February 13, 2019               [Page 7]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
    PUT /test HTTP/1.1
@@ -445,9 +445,9 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson & Yasskin       Expires January 30, 2019                [Page 8]
+Thomson & Yasskin       Expires February 13, 2019               [Page 8]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
 5.2.  Algorithm Agility
@@ -501,9 +501,9 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson & Yasskin       Expires January 30, 2019                [Page 9]
+Thomson & Yasskin       Expires February 13, 2019               [Page 9]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
    o  Reference: A reference to a specification that defines the
@@ -557,9 +557,9 @@ Internet-Draft                    MICE                         July 2018
 
 
 
-Thomson & Yasskin       Expires January 30, 2019               [Page 10]
+Thomson & Yasskin       Expires February 13, 2019              [Page 10]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
    [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web
@@ -613,9 +613,9 @@ Appendix B.  FAQ
 
 
 
-Thomson & Yasskin       Expires January 30, 2019               [Page 11]
+Thomson & Yasskin       Expires February 13, 2019              [Page 11]
 
-Internet-Draft                    MICE                         July 2018
+Internet-Draft                    MICE                       August 2018
 
 
    2.  Why do messages have to be processed in reverse to construct
@@ -669,4 +669,4 @@ Authors' Addresses
 
 
 
-Thomson & Yasskin       Expires January 30, 2019               [Page 12]
+Thomson & Yasskin       Expires February 13, 2019              [Page 12]
