@@ -26,8 +26,6 @@ author:
 
 normative:
   RFC2119:
-  RFC3230:
-  RFC4648:
   RFC5226:
   RFC7230:
   RFC7231:
@@ -266,31 +264,33 @@ status code.  However, if the integrity proof for the first record is not known,
 this check SHOULD NOT fail unless explicitly configured to do so.
 
 
-# The mi-sha256 digest algorithm {#digest-mi-sha256}
+# The "mi-sha256" Digest Algorithm {#digest-mi-sha256}
 
-[RFC3230] describes digests applying to "the entire instance associated with the
-message". The instance corresponds to the "representation" in Section 3 of
-[RFC7231], but unlike the existing digest algorithms, the mi-sha256 digest
-algorithm specifies the top-level digest at the point when the mi-sha256 content
-coding ({{encoding}}) is applied or removed from the representation.
+{{!RFC3230}} describes digests applying to "the entire instance associated with
+the message". The instance corresponds to the "representation" in Section 3 of
+[RFC7231], but unlike the existing digest algorithms, the "mi-sha256" digest
+algorithm specifies the top-level digest at the point when the "mi-sha256"
+content coding ({{encoding}}) is applied or removed from the representation.
 
 When the "mi-sha256" digest algorithm is specified for a representation, the
-recipient MUST:
+recipient MUST use the base64-decoding (Section 4 of {{!RFC4648}}) of the
+"mi-sha256" digest as the `top-proof` for the "mi-sha256" content encoding
+({{validating}}).
 
-1. If the "mi-sha256" content coding has not been applied to the representation
-   exactly once (Section 3.1.2.2 of [RFC7231]), reject the representation.
-1. Let `new-top-proof` be the base64-decoding (Section 4 of [RFC4648]) of the
-   "mi-sha256" digest. The recipient MUST behave as described by Section 4.2.9
-   of {{!I-D.ietf-httpbis-header-structure}} if it encounters improper padding,
-   non-zero padding bits, or non-alphabet characters, where rejecting the data
-   means to reject the representation.
-1. If the `top-proof` for the "mi-sha256" content encoding ({{validating}}) has
-   been set before and is not equal to `new-top-proof`, reject the
-   representation.
-1. Set `top-proof` to `new-top-proof`.
+The recipient MUST behave as described by Section 4.2.9 of
+{{!I-D.ietf-httpbis-header-structure}} if it encounters improper padding,
+non-zero padding bits, or non-alphabet characters, where rejecting the data
+means to reject the representation.
 
-When rejecting the representation, clients SHOULD treat this as equivalent to a
-server error, and servers SHOULD generate a 400 or other 4xx status code.
+If different mechanisms specify different `top-proof` values for the "mi-sha256"
+content encoding, the recipient MUST reject the representation.
+
+If "mi-sha256" content coding has not been applied to the representation exactly
+once (Section 3.1.2.2 of [RFC7231]), the recipient MUST reject the
+representation.
+
+When rejecting the representation, clients SHOULD treat this as equivalent
+to a server error, and servers SHOULD generate a 400 or other 4xx status code.
 
 *RFC EDITOR: Please remove the next paragraph before publication.*
 
@@ -338,7 +338,7 @@ atermelon
 ~~~
 
 Since the inline integrity proofs contain non-printing characters, these are
-shown here using the base64 encoding [RFC4648] with new lines between the
+shown here using the base64 encoding {{?RFC4648}} with new lines between the
 original text and integrity proofs.  Note that there is a single trailing space
 (0x20) on the first line.
 
@@ -390,7 +390,7 @@ Registry, as detailed in {{encoding}}.
 * Reference: this specification
 
 
-## The "mi-sha256" digest algorithm {#iana-digest}
+## The "mi-sha256" Digest Algorithm {#iana-digest}
 
 This memo registers the "mi-sha256" digest algorithm in the [HTTP Digest
 Algorithm
