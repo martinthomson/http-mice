@@ -46,7 +46,6 @@ normative:
 
 informative:
   RFC2818:
-  RFC5246:
   RFC6962:
   RFC7233:
   SRI:
@@ -86,7 +85,7 @@ The source code and issues list for this draft can be found at
 
 Integrity protection for HTTP content is highly valuable.  HTTPS [RFC2818] is
 the most common form of integrity protection deployed, but that requires a
-direct TLS [RFC5246] connection to a host.  However, additional integrity
+direct TLS {{?RFC8446}} connection to a host.  However, additional integrity
 protection might be desirable for some use cases.  This might be for additional
 protection against failures or attack (see [SRI]) or because content needs to
 remain unmodified throughout multiple HTTPS-protected exchanges.
