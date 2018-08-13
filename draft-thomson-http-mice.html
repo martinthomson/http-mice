@@ -286,8 +286,7 @@ ul.toc li {
 <link href="#rfc.section.2" rel="Chapter" title="2 The &#8220;mi-sha256&#8221; HTTP Content Encoding">
 <link href="#rfc.section.2.1" rel="Chapter" title="2.1 Content Encoding Structure">
 <link href="#rfc.section.2.2" rel="Chapter" title="2.2 Validating Integrity Proofs">
-<link href="#rfc.section.3" rel="Chapter" title="3 The MI HTTP Header Field">
-<link href="#rfc.section.3.1" rel="Chapter" title="3.1 MI Header Field Parameters">
+<link href="#rfc.section.3" rel="Chapter" title="3 The &#8220;mi-sha256&#8221; Digest Algorithm">
 <link href="#rfc.section.4" rel="Chapter" title="4 Examples">
 <link href="#rfc.section.4.1" rel="Chapter" title="4.1 Simple Example">
 <link href="#rfc.section.4.2" rel="Chapter" title="4.2 Example with Multiple Records">
@@ -296,9 +295,7 @@ ul.toc li {
 <link href="#rfc.section.5.2" rel="Chapter" title="5.2 Algorithm Agility">
 <link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations">
 <link href="#rfc.section.6.1" rel="Chapter" title="6.1 The &#8220;mi-sha256&#8221; HTTP Content Encoding">
-<link href="#rfc.section.6.2" rel="Chapter" title="6.2 MI Header Field">
-<link href="#rfc.section.6.3" rel="Chapter" title="6.3 The HTTP MI Parameter Registry">
-<link href="#rfc.section.6.3.1" rel="Chapter" title="6.3.1 mi-sha256 parameter">
+<link href="#rfc.section.6.2" rel="Chapter" title="6.2 The &#8220;mi-sha256&#8221; Digest Algorithm">
 <link href="#rfc.references" rel="Chapter" title="7 References">
 <link href="#rfc.references.1" rel="Chapter" title="7.1 Normative References">
 <link href="#rfc.references.2" rel="Chapter" title="7.2 Informative References">
@@ -381,11 +378,9 @@ ul.toc li {
 </li>
 <li>2.2.   <a href="#rfc.section.2.2">Validating Integrity Proofs</a>
 </li>
-</ul><li>3.   <a href="#rfc.section.3">The MI HTTP Header Field</a>
+</ul><li>3.   <a href="#rfc.section.3">The &#8220;mi-sha256&#8221; Digest Algorithm</a>
 </li>
-<ul><li>3.1.   <a href="#rfc.section.3.1">MI Header Field Parameters</a>
-</li>
-</ul><li>4.   <a href="#rfc.section.4">Examples</a>
+<li>4.   <a href="#rfc.section.4">Examples</a>
 </li>
 <ul><li>4.1.   <a href="#rfc.section.4.1">Simple Example</a>
 </li>
@@ -401,13 +396,9 @@ ul.toc li {
 </li>
 <ul><li>6.1.   <a href="#rfc.section.6.1">The &#8220;mi-sha256&#8221; HTTP Content Encoding</a>
 </li>
-<li>6.2.   <a href="#rfc.section.6.2">MI Header Field</a>
+<li>6.2.   <a href="#rfc.section.6.2">The &#8220;mi-sha256&#8221; Digest Algorithm</a>
 </li>
-<li>6.3.   <a href="#rfc.section.6.3">The HTTP MI Parameter Registry</a>
-</li>
-<ul><li>6.3.1.   <a href="#rfc.section.6.3.1">mi-sha256 parameter</a>
-</li>
-</ul></ul><li>7.   <a href="#rfc.references">References</a>
+</ul><li>7.   <a href="#rfc.references">References</a>
 </li>
 <ul><li>7.1.   <a href="#rfc.references.1">Normative References</a>
 </li>
@@ -428,7 +419,7 @@ ul.toc li {
 </h1>
 <p id="rfc.section.1.p.1">Integrity protection for HTTP content is highly valuable.  HTTPS <a href="#RFC2818" class="xref">[RFC2818]</a> is the most common form of integrity protection deployed, but that requires a direct TLS <a href="#RFC8446" class="xref">[RFC8446]</a> connection to a host.  However, additional integrity protection might be desirable for some use cases.  This might be for additional protection against failures or attack (see <a href="#SRI" class="xref">[SRI]</a>) or because content needs to remain unmodified throughout multiple HTTPS-protected exchanges.</p>
 <p id="rfc.section.1.p.2">This document describes a &#8220;mi-sha256&#8221; content-encoding (see <a href="#encoding" class="xref">Section 2</a>) that is a progressive, hash-based integrity check based on Merkle Hash Trees <a href="#MERKLE" class="xref">[MERKLE]</a>.</p>
-<p id="rfc.section.1.p.3">The means of conveying the root integrity proof used by this content encoding will depend on deployment requirements.  This document defines an MI header field (see <a href="#header" class="xref">Section 3</a>) that can carry an integrity proof.</p>
+<p id="rfc.section.1.p.3">The means of conveying the root integrity proof used by this content encoding will depend on deployment requirements.  This document defines a digest algorithm (see <a href="#digest-mi-sha256" class="xref">Section 3</a>) that can carry an integrity proof.</p>
 <h2 id="rfc.section.1.1">
 <a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a>
 </h2>
@@ -497,14 +488,14 @@ ul.toc li {
 <p id="rfc.section.2.1.p.5">Constructing a message with the &#8220;mi-sha256&#8221; content encoding requires processing of the records in reverse order, inserting the proof derived from each record before that record.</p>
 <p id="rfc.section.2.1.p.6">This structure permits the use of range requests <a href="#RFC7233" class="xref">[RFC7233]</a>. However, to validate a given record, a contiguous sequence of records back to the start of the message is needed.</p>
 <h2 id="rfc.section.2.2">
-<a href="#rfc.section.2.2">2.2.</a> <a href="#validating-integrity-proofs" id="validating-integrity-proofs">Validating Integrity Proofs</a>
+<a href="#rfc.section.2.2">2.2.</a> <a href="#validating" id="validating">Validating Integrity Proofs</a>
 </h2>
-<p id="rfc.section.2.2.p.1">A receiver of a message with the &#8220;mi-sha256&#8221; content-encoding applied first attempts to acquire the integrity proof for the first record, <samp>top-proof</samp>.  If the MI header field is present, a value might be included there.</p>
+<p id="rfc.section.2.2.p.1">A receiver of a message with the &#8220;mi-sha256&#8221; content-encoding applied first attempts to acquire the integrity proof for the first record, <samp>top-proof</samp>.  If the Digest header field is present with the mi-sha256 parameter, a value might be included there.</p>
 <p id="rfc.section.2.2.p.2">The receiver attempts to read the first 8 octets as an unsigned 64-bit integer, &#8220;rs&#8221;. If 8 octets aren&#8217;t available then:</p>
 <p></p>
 
 <ul>
-<li>If 0 octets are available, and <samp>top-proof</samp> is SHA-256(&#8220;\0&#8221;) (whose base64url encoding is &#8220;bjQLnP-zepicpUTmu3gKLHiQHT-zNzh2hRGjBhevoB0&#8221;), then return a 0-length decoded payload.</li>
+<li>If 0 octets are available, and <samp>top-proof</samp> is SHA-256(&#8220;\0&#8221;) (whose base64 encoding is &#8220;bjQLnP+zepicpUTmu3gKLHiQHT+zNzh2hRGjBhevoB0=&#8221;), then return a 0-length decoded payload.</li>
 <li>Otherwise, validation fails.</li>
 </ul>
 <p id="rfc.section.2.2.p.4">The remainder of the message is read into records of size &#8220;rs&#8221; plus 32 octets.  The last record is between 1 and &#8220;rs&#8221; octets in length, if not then validation fails.  For each record:</p>
@@ -518,40 +509,26 @@ ul.toc li {
 </ol>
 <p id="rfc.section.2.2.p.6">If an integrity check fails, the message SHOULD be discarded and the exchange treated as an error unless explicitly configured otherwise.  For clients, treat this as equivalent to a server error; servers SHOULD generate a 400 or other 4xx status code.  However, if the integrity proof for the first record is not known, this check SHOULD NOT fail unless explicitly configured to do so.</p>
 <h1 id="rfc.section.3">
-<a href="#rfc.section.3">3.</a> <a href="#header" id="header">The MI HTTP Header Field</a>
+<a href="#rfc.section.3">3.</a> <a href="#digest-mi-sha256" id="digest-mi-sha256">The &#8220;mi-sha256&#8221; Digest Algorithm</a>
 </h1>
-<p id="rfc.section.3.p.1">The MI HTTP header field carries message integrity proofs corresponding to content encoding(s) that have been applied to a payload body.</p>
-<p id="rfc.section.3.p.2">The MI header field uses the extended ABNF syntax defined in Section 1.2 of <a href="#RFC7230" class="xref">[RFC7230]</a> and the <samp>parameter</samp> rule from <a href="#RFC7231" class="xref">[RFC7231]</a>:</p>
-<pre>
-  MI = #mi_params
-  mi_params = [ parameter *( ";" parameter ) ]
-</pre>
-<p id="rfc.section.3.p.3">If the payload is encoded more than once (as reflected by having multiple content-codings that use the message integrity header field), each application of the content encoding is reflected in the MI header field in the order in which they were applied.</p>
-<p id="rfc.section.3.p.4">The MI header MAY be omitted if the sender intends for the receiver to acquire the integrity proof for the first record by other means.</p>
+<p><a href="#RFC3230" class="xref">[RFC3230]</a> describes digests applying to &#8220;the entire instance associated with the message&#8221;. The instance corresponds to the &#8220;representation&#8221; in Section 3 of <a href="#RFC7231" class="xref">[RFC7231]</a>, but unlike the existing digest algorithms, the &#8220;mi-sha256&#8221; digest algorithm specifies the top-level digest at the point when the &#8220;mi-sha256&#8221; content coding (<a href="#encoding" class="xref">Section 2</a>) is applied or removed from the representation.</p>
+<p id="rfc.section.3.p.2">When the &#8220;mi-sha256&#8221; digest algorithm is specified for a representation, the recipient MUST use the base64-decoding (Section 4 of <a href="#RFC4648" class="xref">[RFC4648]</a>) of the &#8220;mi-sha256&#8221; digest as the <samp>top-proof</samp> for the &#8220;mi-sha256&#8221; content encoding (<a href="#validating" class="xref">Section 2.2</a>).</p>
+<p id="rfc.section.3.p.3">The recipient MUST behave as described by Section 4.2.9 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a> if it encounters improper padding, non-zero padding bits, or non-alphabet characters, where rejecting the data means to reject the representation.</p>
+<p id="rfc.section.3.p.4">If different mechanisms specify different <samp>top-proof</samp> values for the &#8220;mi-sha256&#8221; content encoding, the recipient MUST reject the representation.</p>
+<p id="rfc.section.3.p.5">If &#8220;mi-sha256&#8221; content coding has not been applied to the representation exactly once (Section 3.1.2.2 of <a href="#RFC7231" class="xref">[RFC7231]</a>), the recipient MUST reject the representation.</p>
+<p id="rfc.section.3.p.6">When rejecting the representation, clients SHOULD treat this as equivalent to a server error, and servers SHOULD generate a 400 or other 4xx status code.</p>
 <p><em>RFC EDITOR: Please remove the next paragraph before publication.</em></p>
-<p id="rfc.section.3.p.6">Implementations of drafts of this specification use the &#8220;MI&#8221; header field instead of renaming it to MI-## like the &#8220;mi-sha256&#8221; content encoding.</p>
-<h2 id="rfc.section.3.1">
-<a href="#rfc.section.3.1">3.1.</a> <a href="#mi-header-field-parameters" id="mi-header-field-parameters">MI Header Field Parameters</a>
-</h2>
-<p id="rfc.section.3.1.p.1">The following parameters are used in validating content encoded with the &#8220;mi-sha256&#8221; content encoding:</p>
-<p></p>
-
-<dl>
-<dt>mi-sha256:</dt>
-<dd style="margin-left: 8">The &#8220;mi-sha256&#8221; parameter carries an integrity proof for the first record of the message.  This provides integrity for the entire message body.  This value is encoded using base64url encoding <a href="#RFC7515" class="xref">[RFC7515]</a>.</dd>
-</dl>
-<p><em>RFC EDITOR: Please remove the next paragraph before publication.</em></p>
-<p id="rfc.section.3.1.p.4">Implementations of drafts of this specification MUST use a parameter named the same as the &#8220;mi-sha256-##&#8221; content encoding they implement, with the meaning described for &#8220;mi-sha256&#8221; above.</p>
+<p id="rfc.section.3.p.8">Implementations of drafts of this specification MUST use a digest algorithm named the same as the &#8220;mi-sha256-##&#8221; content encoding they implement, with the meaning described for &#8220;mi-sha256&#8221; above.</p>
 <h1 id="rfc.section.4">
 <a href="#rfc.section.4">4.</a> <a href="#examples" id="examples">Examples</a>
 </h1>
 <h2 id="rfc.section.4.1">
 <a href="#rfc.section.4.1">4.1.</a> <a href="#simple-example" id="simple-example">Simple Example</a>
 </h2>
-<p id="rfc.section.4.1.p.1">The following example contains a short message.  This contains just a single record, so there are no inline integrity proofs, just a single value in a MI header field.  The record size is prepended to the message body (shown here in angle brackets).</p>
+<p id="rfc.section.4.1.p.1">The following example contains a short message.  This contains just a single record, so there are no inline integrity proofs, just a single value in the mi-sha256 parameter of a Digest header field.  The record size is prepended to the message body (shown here in angle brackets).</p>
 <pre>
 HTTP/1.1 200 OK
-MI: mi-sha256=dcRDgR2GM35DluAV13PzgnG6-pvQwPywfFvAu1UeFrs
+Digest: mi-sha256=dcRDgR2GM35DluAV13PzgnG6+pvQwPywfFvAu1UeFrs=
 Content-Encoding: mi-sha256
 Content-Length: 49
 
@@ -564,17 +541,17 @@ Content-Length: 49
 <pre>
 PUT /test HTTP/1.1
 Host: example.com
-MI: mi-sha256=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4
+Digest: mi-sha256=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4=
 Content-Encoding: mi-sha256
 Content-Length: 113
 
 &lt;0x0000000000000010&gt;When I grow up,
-OElbplJlPK-Rv6JNK6p5_515IaoPoZo-2elWL7OQ60A
+OElbplJlPK+Rv6JNK6p5/515IaoPoZo+2elWL7OQ60A=
 I want to be a w
-iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0
+iPMpmgExHPrbEX3/RvwP4d16fWlK4l++p75PUu_KyN0=
 atermelon
 </pre>
-<p id="rfc.section.4.2.p.2">Since the inline integrity proofs contain non-printing characters, these are shown here using the base64url encoding <a href="#RFC7515" class="xref">[RFC7515]</a> with new lines between the original text and integrity proofs.  Note that there is a single trailing space (0x20) on the first line.</p>
+<p id="rfc.section.4.2.p.2">Since the inline integrity proofs contain non-printing characters, these are shown here using the base64 encoding <a href="#RFC4648" class="xref">[RFC4648]</a> with new lines between the original text and integrity proofs.  Note that there is a single trailing space (0x20) on the first line.</p>
 <h1 id="rfc.section.5">
 <a href="#rfc.section.5">5.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a>
 </h1>
@@ -604,40 +581,14 @@ atermelon
 <li>Reference: this specification</li>
 </ul>
 <h2 id="rfc.section.6.2">
-<a href="#rfc.section.6.2">6.2.</a> <a href="#iana-header" id="iana-header">MI Header Field</a>
+<a href="#rfc.section.6.2">6.2.</a> <a href="#iana-digest" id="iana-digest">The &#8220;mi-sha256&#8221; Digest Algorithm</a>
 </h2>
-<p id="rfc.section.6.2.p.1">This memo registers the &#8220;MI&#8221; HTTP header field in the Permanent Message Header Registry, as detailed in <a href="#header" class="xref">Section 3</a>.</p>
+<p id="rfc.section.6.2.p.1">This memo registers the &#8220;mi-sha256&#8221; digest algorithm in the <a href="https://www.iana.org/assignments/http-dig-alg/http-dig-alg.xhtml">HTTP Digest Algorithm Values</a> registry:</p>
 <p></p>
 
 <ul>
-<li>Field name: MI</li>
-<li>Protocol: HTTP</li>
-<li>Status: Standard</li>
-<li>Reference: this specification</li>
-<li>Notes:</li>
-</ul>
-<h2 id="rfc.section.6.3">
-<a href="#rfc.section.6.3">6.3.</a> <a href="#mi-registry" id="mi-registry">The HTTP MI Parameter Registry</a>
-</h2>
-<p id="rfc.section.6.3.p.1">This memo establishes a registry for parameters used by the &#8220;MI&#8221; header field under the &#8220;Hypertext Transfer Protocol (HTTP) Parameters&#8221; grouping.  The &#8220;Hypertext Transfer Protocol (HTTP) MI Parameters&#8221; registry operates under an &#8220;Specification Required&#8221; policy <a href="#RFC5226" class="xref">[RFC5226]</a>.</p>
-<p id="rfc.section.6.3.p.2">Entries in this registry are expected to include the following information:</p>
-<p></p>
-
-<ul>
-<li>Parameter Name: The name of the parameter.</li>
-<li>Purpose: A brief description of the purpose of the parameter.</li>
-<li>Reference: A reference to a specification that defines the semantics of the parameter.</li>
-</ul>
-<p id="rfc.section.6.3.p.4">The initial contents of this registry are:</p>
-<h3 id="rfc.section.6.3.1">
-<a href="#rfc.section.6.3.1">6.3.1.</a> <a href="#mi-sha256-parameter" id="mi-sha256-parameter">mi-sha256 parameter</a>
-</h3>
-<p></p>
-
-<ul>
-<li>Parameter Name: mi-sha256</li>
-<li>Purpose: The value of the integrity proof for the first record.</li>
-<li>Reference: this document</li>
+<li>Digest Algorithm: mi-sha256</li>
+<li>Description: As specified in <a href="#digest-mi-sha256" class="xref">Section 3</a>.</li>
 </ul>
 <h1 id="rfc.references">
 <a href="#rfc.references">7.</a> References</h1>
@@ -650,6 +601,11 @@ atermelon
 <a>Department of Commerce, National.</a>, "<a href="http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">NIST FIPS 180-4, Secure Hash Standard</a>", March 2012.</td>
 </tr>
 <tr>
+<td class="reference"><b id="I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</b></td>
+<td class="top">
+<a>Nottingham, M.</a> and <a>P. Kamp</a>, "<a href="https://tools.ietf.org/html/draft-ietf-httpbis-header-structure-07">Structured Headers for HTTP</a>", Internet-Draft draft-ietf-httpbis-header-structure-07, July 2018.</td>
+</tr>
+<tr>
 <td class="reference"><b id="MERKLE">[MERKLE]</b></td>
 <td class="top">
 <a>Merkle, R.</a>, "<a>A Digital Signature Based on a Conventional Encryption Function</a>", International Crytology Conference - CRYPTO , 1987.</td>
@@ -660,24 +616,19 @@ atermelon
 <a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
 </tr>
 <tr>
-<td class="reference"><b id="RFC5226">[RFC5226]</b></td>
+<td class="reference"><b id="RFC3230">[RFC3230]</b></td>
 <td class="top">
-<a>Narten, T.</a> and <a>H. Alvestrand</a>, "<a href="https://tools.ietf.org/html/rfc5226">Guidelines for Writing an IANA Considerations Section in RFCs</a>", RFC 5226, DOI 10.17487/RFC5226, May 2008.</td>
+<a>Mogul, J.</a> and <a>A. Van Hoff</a>, "<a href="https://tools.ietf.org/html/rfc3230">Instance Digests in HTTP</a>", RFC 3230, DOI 10.17487/RFC3230, January 2002.</td>
 </tr>
 <tr>
-<td class="reference"><b id="RFC7230">[RFC7230]</b></td>
+<td class="reference"><b id="RFC4648">[RFC4648]</b></td>
 <td class="top">
-<a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="https://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>", RFC 7230, DOI 10.17487/RFC7230, June 2014.</td>
+<a>Josefsson, S.</a>, "<a href="https://tools.ietf.org/html/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>", RFC 4648, DOI 10.17487/RFC4648, October 2006.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC7231">[RFC7231]</b></td>
 <td class="top">
 <a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="https://tools.ietf.org/html/rfc7231">Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</a>", RFC 7231, DOI 10.17487/RFC7231, June 2014.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC7515">[RFC7515]</b></td>
-<td class="top">
-<a>Jones, M.</a>, <a>Bradley, J.</a> and <a>N. Sakimura</a>, "<a href="https://tools.ietf.org/html/rfc7515">JSON Web Signature (JWS)</a>", RFC 7515, DOI 10.17487/RFC7515, May 2015.</td>
 </tr>
 </tbody></table>
 <h2 id="rfc.references.2">

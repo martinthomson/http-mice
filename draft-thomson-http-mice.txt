@@ -80,8 +80,7 @@ Table of Contents
    2.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . . . .   3
      2.1.  Content Encoding Structure  . . . . . . . . . . . . . . .   5
      2.2.  Validating Integrity Proofs . . . . . . . . . . . . . . .   5
-   3.  The MI HTTP Header Field  . . . . . . . . . . . . . . . . . .   6
-     3.1.  MI Header Field Parameters  . . . . . . . . . . . . . . .   7
+   3.  The "mi-sha256" Digest Algorithm  . . . . . . . . . . . . . .   6
    4.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
      4.1.  Simple Example  . . . . . . . . . . . . . . . . . . . . .   7
      4.2.  Example with Multiple Records . . . . . . . . . . . . . .   7
@@ -90,22 +89,23 @@ Table of Contents
      5.2.  Algorithm Agility . . . . . . . . . . . . . . . . . . . .   9
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
      6.1.  The "mi-sha256" HTTP Content Encoding . . . . . . . . . .   9
-     6.2.  MI Header Field . . . . . . . . . . . . . . . . . . . . .   9
-     6.3.  The HTTP MI Parameter Registry  . . . . . . . . . . . . .   9
-       6.3.1.  mi-sha256 parameter . . . . . . . . . . . . . . . . .  10
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  11
-     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  11
+     6.2.  The "mi-sha256" Digest Algorithm  . . . . . . . . . . . .   9
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  10
+     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  11
    Appendix B.  FAQ  . . . . . . . . . . . . . . . . . . . . . . . .  11
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  12
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  11
 
 1.  Introduction
 
    Integrity protection for HTTP content is highly valuable.  HTTPS
    [RFC2818] is the most common form of integrity protection deployed,
    but that requires a direct TLS [RFC8446] connection to a host.
+   However, additional integrity protection might be desirable for some
+   use cases.  This might be for additional protection against failures
+
 
 
 
@@ -114,8 +114,6 @@ Thomson & Yasskin       Expires February 14, 2019               [Page 2]
 Internet-Draft                    MICE                       August 2018
 
 
-   However, additional integrity protection might be desirable for some
-   use cases.  This might be for additional protection against failures
    or attack (see [SRI]) or because content needs to remain unmodified
    throughout multiple HTTPS-protected exchanges.
 
@@ -125,7 +123,7 @@ Internet-Draft                    MICE                       August 2018
 
    The means of conveying the root integrity proof used by this content
    encoding will depend on deployment requirements.  This document
-   defines an MI header field (see Section 3) that can carry an
+   defines a digest algorithm (see Section 3) that can carry an
    integrity proof.
 
 1.1.  Notational Conventions
@@ -162,6 +160,8 @@ Internet-Draft                    MICE                       August 2018
    Figure 1 shows the structure of the integrity proofs for a message
    that is split into 4 blocks: A, B, C, D).  As shown, the integrity
    proof for the entire message (that is, "proof(A)") is derived from
+   the content of the first block (A), plus the value of the proof for
+   the second and subsequent blocks.
 
 
 
@@ -169,9 +169,6 @@ Thomson & Yasskin       Expires February 14, 2019               [Page 3]
 
 Internet-Draft                    MICE                       August 2018
 
-
-   the content of the first block (A), plus the value of the proof for
-   the second and subsequent blocks.
 
        proof(A)
          /\
@@ -221,6 +218,9 @@ Internet-Draft                    MICE                       August 2018
 
 
 
+
+
+
 Thomson & Yasskin       Expires February 14, 2019               [Page 4]
 
 Internet-Draft                    MICE                       August 2018
@@ -260,18 +260,18 @@ Internet-Draft                    MICE                       August 2018
 
    A receiver of a message with the "mi-sha256" content-encoding applied
    first attempts to acquire the integrity proof for the first record,
-   "top-proof".  If the MI header field is present, a value might be
-   included there.
+   "top-proof".  If the Digest header field is present with the mi-
+   sha256 parameter, a value might be included there.
 
    The receiver attempts to read the first 8 octets as an unsigned
    64-bit integer, "rs".  If 8 octets aren't available then:
 
    o  If 0 octets are available, and "top-proof" is SHA-256("\0") (whose
-      base64url encoding is "bjQLnP-zepicpUTmu3gKLHiQHT-
-      zNzh2hRGjBhevoB0"), then return a 0-length decoded payload.
+      base64 encoding is
+      "bjQLnP+zepicpUTmu3gKLHiQHT+zNzh2hRGjBhevoB0="), then return a
+      0-length decoded payload.
 
    o  Otherwise, validation fails.
-
 
 
 
@@ -314,22 +314,22 @@ Internet-Draft                    MICE                       August 2018
    integrity proof for the first record is not known, this check SHOULD
    NOT fail unless explicitly configured to do so.
 
-3.  The MI HTTP Header Field
+3.  The "mi-sha256" Digest Algorithm
 
-   The MI HTTP header field carries message integrity proofs
-   corresponding to content encoding(s) that have been applied to a
-   payload body.
+   [RFC3230] describes digests applying to "the entire instance
+   associated with the message".  The instance corresponds to the
+   "representation" in Section 3 of [RFC7231], but unlike the existing
+   digest algorithms, the "mi-sha256" digest algorithm specifies the
+   top-level digest at the point when the "mi-sha256" content coding
+   (Section 2) is applied or removed from the representation.
 
-   The MI header field uses the extended ABNF syntax defined in
-   Section 1.2 of [RFC7230] and the "parameter" rule from [RFC7231]:
+   When the "mi-sha256" digest algorithm is specified for a
+   representation, the recipient MUST use the base64-decoding (Section 4
+   of [RFC4648]) of the "mi-sha256" digest as the "top-proof" for the
+   "mi-sha256" content encoding (Section 2.2).
 
-     MI = #mi_params
-     mi_params = [ parameter *( ";" parameter ) ]
-
-   If the payload is encoded more than once (as reflected by having
-   multiple content-codings that use the message integrity header
-   field), each application of the content encoding is reflected in the
-   MI header field in the order in which they were applied.
+   The recipient MUST behave as described by Section 4.2.9 of
+   [I-D.ietf-httpbis-header-structure] if it encounters improper
 
 
 
@@ -338,30 +338,26 @@ Thomson & Yasskin       Expires February 14, 2019               [Page 6]
 Internet-Draft                    MICE                       August 2018
 
 
-   The MI header MAY be omitted if the sender intends for the receiver
-   to acquire the integrity proof for the first record by other means.
+   padding, non-zero padding bits, or non-alphabet characters, where
+   rejecting the data means to reject the representation.
+
+   If different mechanisms specify different "top-proof" values for the
+   "mi-sha256" content encoding, the recipient MUST reject the
+   representation.
+
+   If "mi-sha256" content coding has not been applied to the
+   representation exactly once (Section 3.1.2.2 of [RFC7231]), the
+   recipient MUST reject the representation.
+
+   When rejecting the representation, clients SHOULD treat this as
+   equivalent to a server error, and servers SHOULD generate a 400 or
+   other 4xx status code.
 
    _RFC EDITOR: Please remove the next paragraph before publication._
 
-   Implementations of drafts of this specification use the "MI" header
-   field instead of renaming it to MI-## like the "mi-sha256" content
-   encoding.
-
-3.1.  MI Header Field Parameters
-
-   The following parameters are used in validating content encoded with
-   the "mi-sha256" content encoding:
-
-   mi-sha256:  The "mi-sha256" parameter carries an integrity proof for
-      the first record of the message.  This provides integrity for the
-      entire message body.  This value is encoded using base64url
-      encoding [RFC7515].
-
-   _RFC EDITOR: Please remove the next paragraph before publication._
-
-   Implementations of drafts of this specification MUST use a parameter
-   named the same as the "mi-sha256-##" content encoding they implement,
-   with the meaning described for "mi-sha256" above.
+   Implementations of drafts of this specification MUST use a digest
+   algorithm named the same as the "mi-sha256-##" content encoding they
+   implement, with the meaning described for "mi-sha256" above.
 
 4.  Examples
 
@@ -369,11 +365,12 @@ Internet-Draft                    MICE                       August 2018
 
    The following example contains a short message.  This contains just a
    single record, so there are no inline integrity proofs, just a single
-   value in a MI header field.  The record size is prepended to the
-   message body (shown here in angle brackets).
+   value in the mi-sha256 parameter of a Digest header field.  The
+   record size is prepended to the message body (shown here in angle
+   brackets).
 
    HTTP/1.1 200 OK
-   MI: mi-sha256=dcRDgR2GM35DluAV13PzgnG6-pvQwPywfFvAu1UeFrs
+   Digest: mi-sha256=dcRDgR2GM35DluAV13PzgnG6+pvQwPywfFvAu1UeFrs=
    Content-Encoding: mi-sha256
    Content-Length: 49
 
@@ -389,6 +386,9 @@ Internet-Draft                    MICE                       August 2018
 
 
 
+
+
+
 Thomson & Yasskin       Expires February 14, 2019               [Page 7]
 
 Internet-Draft                    MICE                       August 2018
@@ -396,18 +396,18 @@ Internet-Draft                    MICE                       August 2018
 
    PUT /test HTTP/1.1
    Host: example.com
-   MI: mi-sha256=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4
+   Digest: mi-sha256=IVa9shfs0nyKEhHqtB3WVNANJ2Njm5KjQLjRtnbkYJ4=
    Content-Encoding: mi-sha256
    Content-Length: 113
 
    <0x0000000000000010>When I grow up,
-   OElbplJlPK-Rv6JNK6p5_515IaoPoZo-2elWL7OQ60A
+   OElbplJlPK+Rv6JNK6p5/515IaoPoZo+2elWL7OQ60A=
    I want to be a w
-   iPMpmgExHPrbEX3_RvwP4d16fWlK4l--p75PUu_KyN0
+   iPMpmgExHPrbEX3/RvwP4d16fWlK4l++p75PUu_KyN0=
    atermelon
 
    Since the inline integrity proofs contain non-printing characters,
-   these are shown here using the base64url encoding [RFC7515] with new
+   these are shown here using the base64 encoding [RFC4648] with new
    lines between the original text and integrity proofs.  Note that
    there is a single trailing space (0x20) on the first line.
 
@@ -469,55 +469,14 @@ Internet-Draft                    MICE                       August 2018
 
    o  Reference: this specification
 
-6.2.  MI Header Field
+6.2.  The "mi-sha256" Digest Algorithm
 
-   This memo registers the "MI" HTTP header field in the Permanent
-   Message Header Registry, as detailed in Section 3.
+   This memo registers the "mi-sha256" digest algorithm in the HTTP
+   Digest Algorithm Values [3] registry:
 
-   o  Field name: MI
+   o  Digest Algorithm: mi-sha256
 
-   o  Protocol: HTTP
-
-   o  Status: Standard
-
-   o  Reference: this specification
-
-   o  Notes:
-
-6.3.  The HTTP MI Parameter Registry
-
-   This memo establishes a registry for parameters used by the "MI"
-   header field under the "Hypertext Transfer Protocol (HTTP)
-   Parameters" grouping.  The "Hypertext Transfer Protocol (HTTP) MI
-   Parameters" registry operates under an "Specification Required"
-   policy [RFC5226].
-
-   Entries in this registry are expected to include the following
-   information:
-
-   o  Parameter Name: The name of the parameter.
-
-   o  Purpose: A brief description of the purpose of the parameter.
-
-
-
-Thomson & Yasskin       Expires February 14, 2019               [Page 9]
-
-Internet-Draft                    MICE                       August 2018
-
-
-   o  Reference: A reference to a specification that defines the
-      semantics of the parameter.
-
-   The initial contents of this registry are:
-
-6.3.1.  mi-sha256 parameter
-
-   o  Parameter Name: mi-sha256
-
-   o  Purpose: The value of the integrity proof for the first record.
-
-   o  Reference: this document
+   o  Description: As specified in Section 3.
 
 7.  References
 
@@ -529,42 +488,41 @@ Internet-Draft                    MICE                       August 2018
               <http://csrc.nist.gov/publications/fips/fips180-4/
               fips-180-4.pdf>.
 
+   [I-D.ietf-httpbis-header-structure]
+              Nottingham, M. and P. Kamp, "Structured Headers for HTTP",
+              draft-ietf-httpbis-header-structure-07 (work in progress),
+              July 2018.
+
    [MERKLE]   Merkle, R., "A Digital Signature Based on a Conventional
               Encryption Function", International Crytology Conference -
               CRYPTO , 1987.
+
+
+
+
+
+Thomson & Yasskin       Expires February 14, 2019               [Page 9]
+
+Internet-Draft                    MICE                       August 2018
+
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
-   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
-              IANA Considerations Section in RFCs", RFC 5226,
-              DOI 10.17487/RFC5226, May 2008,
-              <https://www.rfc-editor.org/info/rfc5226>.
+   [RFC3230]  Mogul, J. and A. Van Hoff, "Instance Digests in HTTP",
+              RFC 3230, DOI 10.17487/RFC3230, January 2002,
+              <https://www.rfc-editor.org/info/rfc3230>.
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <https://www.rfc-editor.org/info/rfc7230>.
+   [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
+              Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
+              <https://www.rfc-editor.org/info/rfc4648>.
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
               DOI 10.17487/RFC7231, June 2014,
               <https://www.rfc-editor.org/info/rfc7231>.
-
-
-
-
-
-Thomson & Yasskin       Expires February 14, 2019              [Page 10]
-
-Internet-Draft                    MICE                       August 2018
-
-
-   [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web
-              Signature (JWS)", RFC 7515, DOI 10.17487/RFC7515, May
-              2015, <https://www.rfc-editor.org/info/rfc7515>.
 
 7.2.  Informative References
 
@@ -595,6 +553,15 @@ Internet-Draft                    MICE                       August 2018
 
    [2] https://github.com/martinthomson/http-mice
 
+   [3] https://www.iana.org/assignments/http-dig-alg/http-dig-alg.xhtml
+
+
+
+Thomson & Yasskin       Expires February 14, 2019              [Page 10]
+
+Internet-Draft                    MICE                       August 2018
+
+
 Appendix A.  Acknowledgements
 
    David Benjamin and Erik Nygren both separately suggested that
@@ -609,14 +576,6 @@ Appendix B.  FAQ
        require a great deal more flexibility than this allows for.
        Transferring the proof separately is sometimes necessary.
        Separating the value out allows for that to happen more easily.
-
-
-
-
-Thomson & Yasskin       Expires February 14, 2019              [Page 11]
-
-Internet-Draft                    MICE                       August 2018
-
 
    2.  Why do messages have to be processed in reverse to construct
        them?
@@ -649,10 +608,51 @@ Authors' Addresses
    Email: martin.thomson@gmail.com
 
 
+
+
+
+
+
+Thomson & Yasskin       Expires February 14, 2019              [Page 11]
+
+Internet-Draft                    MICE                       August 2018
+
+
    Jeffrey Yasskin
    Google
 
    Email: jyasskin@chromium.org
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
