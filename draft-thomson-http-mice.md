@@ -26,8 +26,6 @@ author:
 
 normative:
   RFC2119:
-  RFC5226:
-  RFC7230:
   RFC7231:
   FIPS180-4:
     title: NIST FIPS 180-4, Secure Hash Standard
