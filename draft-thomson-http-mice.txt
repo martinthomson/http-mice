@@ -5,8 +5,8 @@
 Network Working Group                                         M. Thomson
 Internet-Draft                                                   Mozilla
 Intended status: Standards Track                              J. Yasskin
-Expires: February 13, 2019                                        Google
-                                                         August 12, 2018
+Expires: February 14, 2019                                        Google
+                                                         August 13, 2018
 
 
                    Merkle Integrity Content Encoding
@@ -46,14 +46,14 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on February 13, 2019.
+   This Internet-Draft will expire on February 14, 2019.
 
 
 
 
 
 
-Thomson & Yasskin       Expires February 13, 2019               [Page 1]
+Thomson & Yasskin       Expires February 14, 2019               [Page 1]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -105,11 +105,11 @@ Table of Contents
 
    Integrity protection for HTTP content is highly valuable.  HTTPS
    [RFC2818] is the most common form of integrity protection deployed,
-   but that requires a direct TLS [RFC5246] connection to a host.
+   but that requires a direct TLS [RFC8446] connection to a host.
 
 
 
-Thomson & Yasskin       Expires February 13, 2019               [Page 2]
+Thomson & Yasskin       Expires February 14, 2019               [Page 2]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -165,7 +165,7 @@ Internet-Draft                    MICE                       August 2018
 
 
 
-Thomson & Yasskin       Expires February 13, 2019               [Page 3]
+Thomson & Yasskin       Expires February 14, 2019               [Page 3]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -221,7 +221,7 @@ Internet-Draft                    MICE                       August 2018
 
 
 
-Thomson & Yasskin       Expires February 13, 2019               [Page 4]
+Thomson & Yasskin       Expires February 14, 2019               [Page 4]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -277,7 +277,7 @@ Internet-Draft                    MICE                       August 2018
 
 
 
-Thomson & Yasskin       Expires February 13, 2019               [Page 5]
+Thomson & Yasskin       Expires February 14, 2019               [Page 5]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -333,7 +333,7 @@ Internet-Draft                    MICE                       August 2018
 
 
 
-Thomson & Yasskin       Expires February 13, 2019               [Page 6]
+Thomson & Yasskin       Expires February 14, 2019               [Page 6]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -389,7 +389,7 @@ Internet-Draft                    MICE                       August 2018
 
 
 
-Thomson & Yasskin       Expires February 13, 2019               [Page 7]
+Thomson & Yasskin       Expires February 14, 2019               [Page 7]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -445,7 +445,7 @@ Internet-Draft                    MICE                       August 2018
 
 
 
-Thomson & Yasskin       Expires February 13, 2019               [Page 8]
+Thomson & Yasskin       Expires February 14, 2019               [Page 8]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -501,7 +501,7 @@ Internet-Draft                    MICE                       August 2018
 
 
 
-Thomson & Yasskin       Expires February 13, 2019               [Page 9]
+Thomson & Yasskin       Expires February 14, 2019               [Page 9]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -557,7 +557,7 @@ Internet-Draft                    MICE                       August 2018
 
 
 
-Thomson & Yasskin       Expires February 13, 2019              [Page 10]
+Thomson & Yasskin       Expires February 14, 2019              [Page 10]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -572,11 +572,6 @@ Internet-Draft                    MICE                       August 2018
               DOI 10.17487/RFC2818, May 2000,
               <https://www.rfc-editor.org/info/rfc2818>.
 
-   [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
-              (TLS) Protocol Version 1.2", RFC 5246,
-              DOI 10.17487/RFC5246, August 2008,
-              <https://www.rfc-editor.org/info/rfc5246>.
-
    [RFC6962]  Laurie, B., Langley, A., and E. Kasper, "Certificate
               Transparency", RFC 6962, DOI 10.17487/RFC6962, June 2013,
               <https://www.rfc-editor.org/info/rfc6962>.
@@ -585,6 +580,10 @@ Internet-Draft                    MICE                       August 2018
               "Hypertext Transfer Protocol (HTTP/1.1): Range Requests",
               RFC 7233, DOI 10.17487/RFC7233, June 2014,
               <https://www.rfc-editor.org/info/rfc7233>.
+
+   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
+              <https://www.rfc-editor.org/info/rfc8446>.
 
    [SRI]      Akhawe, D., Braun, F., Marier, F., and J. Weinberger,
               "Subresource Integrity", W3C CR , November 2015,
@@ -613,7 +612,8 @@ Appendix B.  FAQ
 
 
 
-Thomson & Yasskin       Expires February 13, 2019              [Page 11]
+
+Thomson & Yasskin       Expires February 14, 2019              [Page 11]
 
 Internet-Draft                    MICE                       August 2018
 
@@ -669,4 +669,4 @@ Authors' Addresses
 
 
 
-Thomson & Yasskin       Expires February 13, 2019              [Page 12]
+Thomson & Yasskin       Expires February 14, 2019              [Page 12]
